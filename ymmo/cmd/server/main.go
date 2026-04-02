@@ -14,19 +14,27 @@ import (
 func main() {
 	cfg := config.Load()
 
-	// Initialisation de la base de données
+	// Initialisation de la base de données (GORM)
 	db, err := database.New(cfg.DBPath)
 	if err != nil {
 		log.Fatalf("Impossible d'initialiser la base de données: %v", err)
 	}
-	defer db.Close()
+
+	// GORM v2 nécessite de récupérer l'objet *sql.DB sous-jacent pour le fermer
+	sqlDB, err := db.DB.DB()
+	if err != nil {
+		log.Fatalf("Impossible de récupérer l'instance sql.DB: %v", err)
+	}
+	defer sqlDB.Close()
 
 	// Repositories
-	userRepo := repository.NewUserRepository(db.DB)
-	propertyRepo := repository.NewPropertyRepository(db.DB)
-	agencyRepo := repository.NewAgencyRepository(db.DB)
-	favoriteRepo := repository.NewFavoriteRepository(db.DB)
-	contactRepo := repository.NewContactRepository(db.DB)
+	// On passe 'sqlDB' au lieu de 'db.DB'
+	// Cela permet à vos repositories actuels de fonctionner sans AUCUNE modification !
+	userRepo := repository.NewUserRepository(sqlDB)
+	propertyRepo := repository.NewPropertyRepository(sqlDB)
+	agencyRepo := repository.NewAgencyRepository(sqlDB)
+	favoriteRepo := repository.NewFavoriteRepository(sqlDB)
+	contactRepo := repository.NewContactRepository(sqlDB)
 
 	// Services
 	authSvc := service.NewAuthService(userRepo, cfg.JWTSecret)

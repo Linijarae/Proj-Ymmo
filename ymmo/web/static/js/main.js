@@ -15,7 +15,11 @@
 function toggleUserMenu() {
   const dropdown = document.getElementById('userDropdown');
   if (!dropdown) return;
-  dropdown.classList.toggle('open');
+  const isOpen = dropdown.classList.toggle('open');
+  const userBtn = document.querySelector('.nav-user');
+  if (userBtn) {
+    userBtn.setAttribute('aria-expanded', isOpen);
+  }
 }
 
 // Close on outside click
@@ -24,6 +28,8 @@ document.addEventListener('click', function (e) {
   if (!dropdown) return;
   if (!e.target.closest('.nav-user')) {
     dropdown.classList.remove('open');
+    const userBtn = document.querySelector('.nav-user');
+    if (userBtn) userBtn.setAttribute('aria-expanded', 'false');
   }
 });
 
@@ -34,6 +40,7 @@ function toggleMobileMenu() {
   if (!mobileNav) return;
   const isOpen = mobileNav.classList.toggle('open');
   if (hamburger) hamburger.setAttribute('aria-expanded', isOpen);
+  mobileNav.setAttribute('aria-hidden', !isOpen);
   document.body.style.overflow = isOpen ? 'hidden' : '';
 }
 
@@ -44,6 +51,9 @@ document.addEventListener('DOMContentLoaded', function () {
     link.addEventListener('click', function () {
       const mobileNav = document.getElementById('mobileNav');
       if (mobileNav) mobileNav.classList.remove('open');
+      if (mobileNav) mobileNav.setAttribute('aria-hidden', 'true');
+      const hamburger = document.querySelector('.hamburger');
+      if (hamburger) hamburger.setAttribute('aria-expanded', 'false');
       document.body.style.overflow = '';
     });
   });
@@ -55,8 +65,14 @@ function togglePwd(inputId, btn) {
   if (!input) return;
   const isHidden = input.type === 'password';
   input.type = isHidden ? 'text' : 'password';
-  // Swap icon opacity as a hint
-  btn.style.opacity = isHidden ? '1' : '0.5';
+  
+  // Swap icon if using FontAwesome or similar, otherwise fallback to opacity
+  const icon = btn.querySelector('i');
+  if (icon) {
+    icon.className = isHidden ? 'fas fa-eye-slash' : 'fas fa-eye';
+  } else {
+    btn.style.opacity = isHidden ? '1' : '0.5';
+  }
 }
 
 // --- Password strength indicator ---
@@ -107,14 +123,22 @@ function dismissFlash(el) {
     mainImg.addEventListener('click', function () {
       lightboxImg.src = mainImg.src;
       lightbox.classList.add('open');
+      lightbox.setAttribute('aria-hidden', 'false');
+      // Ensure the lightbox is focusable to trap keyboard navigation
+      lightbox.setAttribute('tabindex', '-1');
+      lightbox.focus();
     });
     lightbox.addEventListener('click', function (e) {
       if (e.target === lightbox || e.target.classList.contains('lightbox-close')) {
         lightbox.classList.remove('open');
+        lightbox.setAttribute('aria-hidden', 'true');
       }
     });
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') lightbox.classList.remove('open');
+      if (e.key === 'Escape') {
+        lightbox.classList.remove('open');
+        lightbox.setAttribute('aria-hidden', 'true');
+      }
     });
   }
 
@@ -141,7 +165,14 @@ function toggleFavorite(propertyId) {
       }
       if (!res.ok) return;
       var btn = document.getElementById('fav-btn-' + propertyId);
-      if (btn) btn.classList.toggle('fav-active');
+      if (btn) {
+        btn.classList.toggle('fav-active');
+        const icon = btn.querySelector('i');
+        if (icon) {
+          icon.classList.toggle('fas'); // Solid (active)
+          icon.classList.toggle('far'); // Regular/Outline (inactive)
+        }
+      }
     })
     .catch(function () {});
 }
@@ -163,6 +194,43 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
+// --- Form Validation & Loading States ---
+document.addEventListener('DOMContentLoaded', function () {
+  const forms = document.querySelectorAll('form:not([data-no-validate])');
+  forms.forEach(function (form) {
+    form.addEventListener('submit', function (e) {
+      // HTML5 Form Validation
+      if (!form.checkValidity()) {
+        e.preventDefault();
+        e.stopPropagation();
+        form.classList.add('was-validated');
+        return;
+      }
+      
+      // Prevent double submission and show loading spinner
+      const submitBtn = form.querySelector('button[type="submit"]');
+      if (submitBtn && !submitBtn.dataset.loading) {
+        submitBtn.dataset.loading = "true";
+        const originalWidth = submitBtn.offsetWidth;
+        submitBtn.style.width = originalWidth + 'px'; // Maintain width
+        submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Traitement...';
+        submitBtn.disabled = true;
+      }
+    });
+    
+    // Live validation feedback on input after first failed attempt
+    const inputs = form.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+      input.addEventListener('input', () => {
+        if (form.classList.contains('was-validated')) {
+          input.classList.toggle('is-invalid', !input.checkValidity());
+          input.classList.toggle('is-valid', input.checkValidity());
+        }
+      });
+    });
+  });
+});
+
 // --- Search form: city quick-select from city cards ---
 document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('.city-card[data-city]').forEach(function (card) {
@@ -174,5 +242,27 @@ document.addEventListener('DOMContentLoaded', function () {
         if (form) form.submit();
       }
     });
+  });
+});
+
+// --- Scroll Reveal Animations ---
+document.addEventListener('DOMContentLoaded', function () {
+  const observerOptions = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.1
+  };
+
+  const observer = new IntersectionObserver(function(entries, observer) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('reveal-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+
+  document.querySelectorAll('.reveal').forEach(function(el) {
+    observer.observe(el);
   });
 });

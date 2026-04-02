@@ -29,6 +29,7 @@ func (h *Handlers) HomeHandler(w http.ResponseWriter, r *http.Request) {
 		"Agencies":           agencies,
 		"Summary":            summary,
 		"CityStats":          cityStats,
+		"RecentProperties":   featured,
 	})
 }
 

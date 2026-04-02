@@ -1,45 +1,44 @@
 package database
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 
-	_ "modernc.org/sqlite"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
-// DB est le wrapper autour de *sql.DB
+// DB est le wrapper autour de *gorm.DB
 type DB struct {
-	*sql.DB
+	*gorm.DB
 }
 
-// New ouvre la base de données SQLite et crée les tables si nécessaire
+// New ouvre la base de données PostgreSQL avec GORM et crée les tables si nécessaire
 func New(dsn string) (*DB, error) {
-	db, err := sql.Open("sqlite", dsn)
+	// Connexion avec GORM
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, fmt.Errorf("ouverture de la base de données: %w", err)
 	}
 
-	// Activer les clés étrangères et WAL pour de meilleures performances
-	if _, err := db.Exec("PRAGMA foreign_keys = ON; PRAGMA journal_mode = WAL;"); err != nil {
-		return nil, fmt.Errorf("configuration PRAGMA: %w", err)
-	}
-
 	wrapper := &DB{db}
+	
+	// Note : En pur GORM, on utiliserait plutôt db.AutoMigrate(&models.User{}, &models.Agency{}, ...)
+	// Mais pour conserver votre logique d'injection de schéma manuel, on l'exécute tel quel.
 	if err := wrapper.migrate(); err != nil {
 		return nil, fmt.Errorf("migration: %w", err)
 	}
 
-	log.Println("✅ Base de données initialisée")
+	log.Println("✅ Base de données initialisée (PostgreSQL via GORM)")
 	return wrapper, nil
 }
 
-// migrate crée le schéma de la base de données
+// migrate crée le schéma de la base de données (Syntaxe adaptée pour PostgreSQL)
 func (db *DB) migrate() error {
 	schema := `
 	-- Table des agences
 	CREATE TABLE IF NOT EXISTS agencies (
-		id          INTEGER PRIMARY KEY AUTOINCREMENT,
+		id          SERIAL PRIMARY KEY,
 		name        TEXT NOT NULL,
 		city        TEXT NOT NULL,
 		address     TEXT NOT NULL DEFAULT '',
@@ -48,12 +47,12 @@ func (db *DB) migrate() error {
 		website     TEXT DEFAULT '',
 		description TEXT DEFAULT '',
 		logo        TEXT DEFAULT '',
-		created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
+		created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	);
 
 	-- Table des utilisateurs
 	CREATE TABLE IF NOT EXISTS users (
-		id            INTEGER PRIMARY KEY AUTOINCREMENT,
+		id            SERIAL PRIMARY KEY,
 		email         TEXT NOT NULL UNIQUE,
 		password_hash TEXT NOT NULL,
 		first_name    TEXT NOT NULL DEFAULT '',
@@ -63,20 +62,20 @@ func (db *DB) migrate() error {
 		agency_id     INTEGER REFERENCES agencies(id) ON DELETE SET NULL,
 		avatar        TEXT DEFAULT '',
 		is_active     INTEGER NOT NULL DEFAULT 1,
-		created_at    DATETIME DEFAULT CURRENT_TIMESTAMP,
-		updated_at    DATETIME DEFAULT CURRENT_TIMESTAMP
+		created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	);
 
 	-- Table des biens immobiliers
 	CREATE TABLE IF NOT EXISTS properties (
-		id           INTEGER PRIMARY KEY AUTOINCREMENT,
+		id           SERIAL PRIMARY KEY,
 		title        TEXT NOT NULL,
 		description  TEXT DEFAULT '',
-		price        REAL NOT NULL DEFAULT 0,
+		price        DOUBLE PRECISION NOT NULL DEFAULT 0,
 		type         TEXT NOT NULL DEFAULT 'residential' CHECK(type IN ('residential','commercial')),
 		sub_type     TEXT NOT NULL DEFAULT 'apartment',
 		status       TEXT NOT NULL DEFAULT 'for_sale' CHECK(status IN ('for_sale','for_rent','sold','rented')),
-		surface      REAL DEFAULT 0,
+		surface      DOUBLE PRECISION DEFAULT 0,
 		rooms        INTEGER DEFAULT 0,
 		bedrooms     INTEGER DEFAULT 0,
 		bathrooms    INTEGER DEFAULT 0,
@@ -91,18 +90,18 @@ func (db *DB) migrate() error {
 		city         TEXT NOT NULL DEFAULT '',
 		zip_code     TEXT DEFAULT '',
 		department   TEXT DEFAULT '',
-		latitude     REAL DEFAULT 0,
-		longitude    REAL DEFAULT 0,
+		latitude     DOUBLE PRECISION DEFAULT 0,
+		longitude    DOUBLE PRECISION DEFAULT 0,
 		agency_id    INTEGER NOT NULL REFERENCES agencies(id) ON DELETE CASCADE,
 		agent_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
 		is_featured  INTEGER DEFAULT 0,
-		created_at   DATETIME DEFAULT CURRENT_TIMESTAMP,
-		updated_at   DATETIME DEFAULT CURRENT_TIMESTAMP
+		created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	);
 
 	-- Table des images des biens
 	CREATE TABLE IF NOT EXISTS property_images (
-		id          INTEGER PRIMARY KEY AUTOINCREMENT,
+		id          SERIAL PRIMARY KEY,
 		property_id INTEGER NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
 		url         TEXT NOT NULL,
 		is_primary  INTEGER DEFAULT 0,
@@ -113,13 +112,13 @@ func (db *DB) migrate() error {
 	CREATE TABLE IF NOT EXISTS favorites (
 		user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
 		property_id INTEGER NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
-		created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+		created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		PRIMARY KEY (user_id, property_id)
 	);
 
 	-- Table des demandes de contact
 	CREATE TABLE IF NOT EXISTS contact_requests (
-		id          INTEGER PRIMARY KEY AUTOINCREMENT,
+		id          SERIAL PRIMARY KEY,
 		user_id     INTEGER REFERENCES users(id) ON DELETE SET NULL,
 		property_id INTEGER NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
 		agent_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -128,7 +127,7 @@ func (db *DB) migrate() error {
 		phone       TEXT DEFAULT '',
 		message     TEXT NOT NULL DEFAULT '',
 		status      TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','processed','closed')),
-		created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
+		created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	);
 
 	-- Index pour les recherches fréquentes
@@ -143,7 +142,7 @@ func (db *DB) migrate() error {
 	CREATE INDEX IF NOT EXISTS idx_contacts_property  ON contact_requests(property_id);
 	`
 
-	if _, err := db.Exec(schema); err != nil {
+	if err := db.Exec(schema).Error; err != nil {
 		return err
 	}
 
@@ -152,8 +151,9 @@ func (db *DB) migrate() error {
 
 // seed insère des données de démonstration si la base est vide
 func (db *DB) seed() error {
-	var count int
-	if err := db.QueryRow("SELECT COUNT(*) FROM users").Scan(&count); err != nil {
+	var count int64
+	// On utilise db.Raw + Scan avec GORM pour lire les requêtes brutes
+	if err := db.Raw("SELECT COUNT(*) FROM users").Scan(&count).Error; err != nil {
 		return err
 	}
 	if count > 0 {
@@ -162,15 +162,20 @@ func (db *DB) seed() error {
 
 	log.Println("🌱 Insertion des données de démonstration...")
 
-	// Hash bcrypt pour "Password123!" (généré à l'avance pour le seed)
-	// En production, utiliser le service auth pour créer les utilisateurs
 	pwHash := "$2a$12$1AwpjxNUy1bt8lWF31QRe.wt22cHYKjgBXQzd9nmRKkpCxp1d3IPO"
 
-	tx, err := db.Begin()
-	if err != nil {
-		return err
+	// Début de la transaction GORM
+	tx := db.Begin()
+	if tx.Error != nil {
+		return tx.Error
 	}
-	defer tx.Rollback()
+
+	// On sécurise le Rollback en cas de panique ou d'erreur
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
 
 	// Agences
 	agencies := []struct{ name, city, address, phone, email string }{
@@ -191,36 +196,41 @@ func (db *DB) seed() error {
 
 	agencyIDs := make([]int64, 0)
 	for _, a := range agencies {
-		res, err := tx.Exec(
-			"INSERT INTO agencies (name, city, address, phone, email, description) VALUES (?,?,?,?,?,?)",
+		var id int64
+		// GORM convertit les '?' en '$1' automatiquement. On ajoute RETURNING id pour récupérer l'id inséré.
+		err := tx.Raw(
+			"INSERT INTO agencies (name, city, address, phone, email, description) VALUES (?,?,?,?,?,?) RETURNING id",
 			a.name, a.city, a.address, a.phone, a.email,
 			"Agence Ymmo spécialisée dans la vente et la location de biens résidentiels et commerciaux.",
-		)
+		).Scan(&id).Error
+		
 		if err != nil {
+			tx.Rollback()
 			return err
 		}
-		id, _ := res.LastInsertId()
 		agencyIDs = append(agencyIDs, id)
 	}
 
 	// Super Admin
-	res, err := tx.Exec(
+	var adminID int64
+	err := tx.Raw(
 		`INSERT INTO users (email, password_hash, first_name, last_name, phone, role, is_active)
-		 VALUES (?,?,?,?,?,?,1)`,
+		 VALUES (?,?,?,?,?,?,1) RETURNING id`,
 		"admin@ymmo.fr", pwHash, "Marie", "Dupont", "04 42 00 00 00", "super_admin",
-	)
+	).Scan(&adminID).Error
 	if err != nil {
+		tx.Rollback()
 		return err
 	}
-	adminID, _ := res.LastInsertId()
 
-	// Directeur siège
-	res, err = tx.Exec(
+	// Directeur siège (Pas besoin de l'ID, un simple Exec suffit)
+	err = tx.Exec(
 		`INSERT INTO users (email, password_hash, first_name, last_name, phone, role, agency_id, is_active)
 		 VALUES (?,?,?,?,?,?,?,1)`,
 		"directeur@ymmo.fr", pwHash, "Pierre", "Martin", "04 42 00 00 01", "director", agencyIDs[0],
-	)
+	).Error
 	if err != nil {
+		tx.Rollback()
 		return err
 	}
 
@@ -238,131 +248,135 @@ func (db *DB) seed() error {
 
 	agentIDs := make([]int64, 0)
 	for _, ag := range agents {
-		r, err := tx.Exec(
+		var id int64
+		err := tx.Raw(
 			`INSERT INTO users (email, password_hash, first_name, last_name, role, agency_id, is_active)
-			 VALUES (?,?,?,?,?,?,1)`,
+			 VALUES (?,?,?,?,?,?,1) RETURNING id`,
 			ag.email, pwHash, ag.firstName, ag.lastName, "agent", ag.agencyID,
-		)
+		).Scan(&id).Error
 		if err != nil {
+			tx.Rollback()
 			return err
 		}
-		id, _ := r.LastInsertId()
 		agentIDs = append(agentIDs, id)
 	}
 
 	// Client de démonstration
-	_, err = tx.Exec(
+	err = tx.Exec(
 		`INSERT INTO users (email, password_hash, first_name, last_name, phone, role, is_active)
 		 VALUES (?,?,?,?,?,?,1)`,
 		"client@example.com", pwHash, "Jean", "Durand", "06 12 34 56 78", "client",
-	)
+	).Error
 	if err != nil {
+		tx.Rollback()
 		return err
 	}
 
-	_ = adminID
-
+	// Biens immobiliers de démonstration
 	// Biens immobiliers de démonstration
 	properties := []struct {
 		title, description, ptype, subtype, status, city, zip, address string
-		price, surface                                                  float64
-		rooms, bedrooms, bathrooms                                      int
-		agency_id, agent_id                                             int64
-		featured                                                        bool
-		garden, pool, garage, parking                                   bool
+		price, surface                                                 float64
+		rooms, bedrooms, bathrooms                                     int
+		agency_id, agent_id                                            int64
+		featured                                                       int // <-- Modifié en int
+		garden, pool, garage, parking                                  int // <-- Modifié en int
 	}{
 		{
 			"Magnifique Villa avec Piscine", "Superbe villa contemporaine avec piscine à débordement, vue panoramique et finitions haut de gamme. Jardin paysager de 1500m².",
 			"residential", "villa", "for_sale", "Aix-en-Provence", "13100", "Chemin des Vignes",
-			1250000, 280, 6, 4, 3, agencyIDs[0], agentIDs[0], true, true, true, true, true,
+			1250000, 280, 6, 4, 3, agencyIDs[0], agentIDs[0], 1, 1, 1, 1, 1, // true remplacé par 1
 		},
 		{
 			"Appartement T3 Centre-Ville Nice", "Bel appartement lumineux en plein cœur de Nice, proche de la Promenade des Anglais. Vue mer depuis le salon.",
 			"residential", "apartment", "for_sale", "Nice", "06000", "Rue Masséna",
-			485000, 75, 3, 2, 1, agencyIDs[4], agentIDs[4], true, false, false, false, true,
+			485000, 75, 3, 2, 1, agencyIDs[4], agentIDs[4], 1, 0, 0, 0, 1, // false remplacé par 0
 		},
 		{
 			"Maison de Ville Bordeaux", "Maison de caractère avec cour intérieure dans le quartier des Chartrons. Rénovée avec goût, alliant charme de l'ancien et modernité.",
 			"residential", "house", "for_sale", "Bordeaux", "33000", "Rue Notre-Dame",
-			620000, 165, 5, 3, 2, agencyIDs[5], agentIDs[1], true, true, false, true, false,
+			620000, 165, 5, 3, 2, agencyIDs[5], agentIDs[1], 1, 1, 0, 1, 0,
 		},
 		{
 			"Studio Meublé Paris 8ème", "Studio moderne et entièrement meublé à deux pas des Champs-Élysées. Idéal pour un premier investissement ou une résidence secondaire.",
 			"residential", "studio", "for_rent", "Paris", "75008", "Rue du Faubourg Saint-Honoré",
-			1800, 28, 1, 0, 1, agencyIDs[1], agentIDs[1], false, false, false, false, false,
+			1800, 28, 1, 0, 1, agencyIDs[1], agentIDs[1], 0, 0, 0, 0, 0,
 		},
 		{
 			"Loft Industriel Lyon Confluence", "Loft atypique dans un ancien entrepôt réhabilité. Hauts plafonds, grandes baies vitrées, esprit industriel chic.",
 			"residential", "loft", "for_sale", "Lyon", "69002", "Quai Rambaud",
-			390000, 120, 2, 1, 1, agencyIDs[2], agentIDs[2], false, false, false, false, true,
+			390000, 120, 2, 1, 1, agencyIDs[2], agentIDs[2], 0, 0, 0, 0, 1,
 		},
 		{
 			"Bureau Moderne Open Space Marseille", "Plateau de bureaux en open space, idéalement situé dans le quartier d'affaires de Marseille. Fibre optique et espaces communs.",
 			"commercial", "office", "for_rent", "Marseille", "13008", "Avenue du Prado",
-			4500, 180, 0, 0, 2, agencyIDs[3], agentIDs[3], false, false, false, false, true,
+			4500, 180, 0, 0, 2, agencyIDs[3], agentIDs[3], 0, 0, 0, 0, 1,
 		},
 		{
 			"Duplex Terrasse Toulouse", "Magnifique duplex avec grande terrasse ensoleillée offrant une vue dégagée sur la ville rose. Belle luminosité toute la journée.",
 			"residential", "duplex", "for_sale", "Toulouse", "31000", "Allées Jean Jaurès",
-			340000, 95, 4, 2, 2, agencyIDs[6], agentIDs[4], false, true, false, false, true,
+			340000, 95, 4, 2, 2, agencyIDs[6], agentIDs[4], 0, 1, 0, 0, 1,
 		},
 		{
 			"Maison Familiale Nantes", "Grande maison familiale dans un quartier calme et résidentiel de Nantes. Proche des écoles et commerces. Jardin arboré.",
 			"residential", "house", "for_sale", "Nantes", "44000", "Rue des Jardins",
-			420000, 145, 6, 4, 2, agencyIDs[8], agentIDs[0], false, true, false, true, true,
+			420000, 145, 6, 4, 2, agencyIDs[8], agentIDs[0], 0, 1, 0, 1, 1,
 		},
 		{
 			"Appartement Haussmannien Paris 8ème", "Somptueux appartement haussmannien entièrement rénové. Parquet en chêne massif, moulures d'époque, cuisine équipée haut de gamme.",
 			"residential", "apartment", "for_sale", "Paris", "75008", "Avenue Hoche",
-			1850000, 185, 5, 3, 2, agencyIDs[1], agentIDs[1], true, false, false, false, false,
+			1850000, 185, 5, 3, 2, agencyIDs[1], agentIDs[1], 1, 0, 0, 0, 0,
 		},
 		{
 			"Local Commercial Centre Strasbourg", "Local commercial idéalement situé en hyper-centre de Strasbourg. Fort passage piéton, vitrine sur rue.",
 			"commercial", "retail", "for_rent", "Strasbourg", "67000", "Rue des Grandes Arcades",
-			3200, 85, 0, 0, 1, agencyIDs[9], agentIDs[2], false, false, false, false, false,
+			3200, 85, 0, 0, 1, agencyIDs[9], agentIDs[2], 0, 0, 0, 0, 0,
 		},
 		{
 			"Villa Contemporaine Montpellier", "Villa contemporaine de plain-pied avec piscine et jardin paysager. Architecture moderne, matériaux nobles.",
 			"residential", "villa", "for_sale", "Montpellier", "34000", "Domaine du Golf",
-			890000, 210, 5, 4, 3, agencyIDs[7], agentIDs[3], true, true, true, true, true,
+			890000, 210, 5, 4, 3, agencyIDs[7], agentIDs[3], 1, 1, 1, 1, 1,
 		},
 		{
 			"Appartement T2 Grenoble", "Appartement T2 lumineux avec balcon, vue sur le Vercors. Résidence sécurisée avec gardien, parking en sous-sol.",
 			"residential", "apartment", "for_rent", "Grenoble", "38000", "Avenue du Grésivaudan",
-			750, 48, 2, 1, 1, agencyIDs[12], agentIDs[4], false, false, false, false, true,
+			750, 48, 2, 1, 1, agencyIDs[12], agentIDs[4], 0, 0, 0, 0, 1,
 		},
 	}
 
 	for _, p := range properties {
-		r, err := tx.Exec(
+		var propID int64
+		err := tx.Raw(
 			`INSERT INTO properties 
 			 (title, description, price, type, sub_type, status, surface, rooms, bedrooms, bathrooms, 
 			  address, city, zip_code, agency_id, agent_id, is_featured, garden, pool, garage, parking, elevator)
-			 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+			 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) RETURNING id`,
 			p.title, p.description, p.price, p.ptype, p.subtype, p.status,
 			p.surface, p.rooms, p.bedrooms, p.bathrooms,
 			p.address, p.city, p.zip, p.agency_id, p.agent_id, p.featured,
-			p.garden, p.pool, p.garage, p.parking, false,
-		)
+			p.garden, p.pool, p.garage, p.parking, 0, // <-- Ici aussi, on remplace 'false' par '0' pour 'elevator'
+		).Scan(&propID).Error
+		
 		if err != nil {
+			tx.Rollback()
 			return err
 		}
-		propID, _ := r.LastInsertId()
 
 		// Image principale fictive (SVG placeholder)
-		_, err = tx.Exec(
+		err = tx.Exec(
 			"INSERT INTO property_images (property_id, url, is_primary, sort_order) VALUES (?,?,1,0)",
 			propID, fmt.Sprintf("/static/img/property-%d.svg", (propID%5)+1),
-		)
+		).Error
 		if err != nil {
+			tx.Rollback()
 			return err
 		}
 	}
 
 	// Demandes de contact de démonstration
 	contactsData := []struct {
-		propID          int64
-		agentID         int64
+		propID           int64
+		agentID          int64
 		name, email, msg string
 	}{
 		{1, agentIDs[0], "Jean Durand", "client@example.com", "Je suis intéressé par cette villa. Pouvez-vous me contacter pour une visite ?"},
@@ -370,20 +384,21 @@ func (db *DB) seed() error {
 		{9, agentIDs[1], "Paul Rousseau", "p.rousseau@email.com", "Je recherche un appartement haussmannien. Celui-ci m'intéresse beaucoup."},
 	}
 	for _, c := range contactsData {
-		_, err = tx.Exec(
+		err = tx.Exec(
 			`INSERT INTO contact_requests (property_id, agent_id, full_name, email, message, status)
 			 VALUES (?,?,?,?,?,?)`,
 			c.propID, c.agentID, c.name, c.email, c.msg, "pending",
-		)
+		).Error
 		if err != nil {
+			tx.Rollback()
 			return err
 		}
 	}
 
-	if err := tx.Commit(); err != nil {
+	if err := tx.Commit().Error; err != nil {
 		return err
 	}
 
-	log.Println("✅ Données de démonstration insérées")
+	log.Println("✅ Données de démonstration insérées (GORM + Postgres)")
 	return nil
 }
