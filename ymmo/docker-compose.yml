@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: ymmo_postgres
+    environment:
+      POSTGRES_USER: ymmo_user
+      POSTGRES_PASSWORD: ymmo_password
+      POSTGRES_DB: ymmo_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  app:
+    build: .
+    container_name: ymmo_app
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      # L'URL de connexion PostgreSQL que votre application Go lira
+      - DB_PATH=postgres://ymmo_user:ymmo_password@db:5432/ymmo_db?sslmode=disable
+      - JWT_SECRET=changez-ce-secret-en-production
+      - ENV=production
+    depends_on:
+      - db
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
