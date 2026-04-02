@@ -14,19 +14,23 @@
       <h1 class="auth-title">Connexion</h1>
       <p class="auth-subtitle">Accédez à votre espace personnel</p>
 
-      {{with .Data}}
-      {{if .Error}}
-      <div class="alert alert--error">{{.Error}}</div>
+      {{$data := .Data}}
+      {{if $data}}
+      {{if $data.Error}}
+      <div class="alert alert--error">{{$data.Error}}</div>
+      {{end}}
       {{end}}
 
       <form action="/connexion" method="POST" class="auth-form">
-        {{if .Redirect}}
-        <input type="hidden" name="redirect" value="{{.Redirect}}">
+        {{if $data}}
+        {{if $data.Redirect}}
+        <input type="hidden" name="redirect" value="{{$data.Redirect}}">
+        {{end}}
         {{end}}
 
         <div class="form-group">
           <label class="form-label">Adresse email</label>
-          <input type="email" name="email" value="{{.Email}}" placeholder="votre@email.fr"
+          <input type="email" name="email" value="{{if $data}}{{$data.Email}}{{end}}" placeholder="votre@email.fr"
                  class="form-control" required autofocus autocomplete="email">
         </div>
 
@@ -49,7 +53,6 @@
 
       <div class="auth-divider"><span>Nouveau sur Ymmo ?</span></div>
       <a href="/inscription" class="btn btn-outline btn-block">Créer un compte</a>
-      {{end}}
 
       <div class="auth-demo-info">
         <details>
@@ -78,16 +81,5 @@
     </div>
   </div>
 </section>
-
-<script>
-function fillDemo(email) {
-  document.querySelector('input[name="email"]').value = email;
-  document.querySelector('input[name="password"]').value = 'Password123!';
-}
-function togglePwd(id, btn) {
-  const input = document.getElementById(id);
-  input.type = input.type === 'password' ? 'text' : 'password';
-}
-</script>
 
 {{template "footer" .}}

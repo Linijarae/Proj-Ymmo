@@ -60,18 +60,39 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // --- Toggle password visibility ---
+function getEyeIconSvg(visible) {
+  if (visible) {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17.94 17.94A10.93 10.93 0 0 1 12 19c-7 0-11-7-11-7a21.76 21.76 0 0 1 5.06-5.94"/><path d="M1 1l22 22"/><path d="M9.53 9.53A3.5 3.5 0 0 0 12 15.5"/><path d="M14.47 14.47A3.5 3.5 0 0 0 9.53 9.53"/><path d="M21.94 12s-1.54 2.7-4.53 4.94"/><path d="M10.58 5.08A11.06 11.06 0 0 1 12 5c7 0 11 7 11 7a22.58 22.58 0 0 1-2.18 3.19"/></svg>';
+  }
+
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+}
+
 function togglePwd(inputId, btn) {
   const input = document.getElementById(inputId);
   if (!input) return;
+
   const isHidden = input.type === 'password';
   input.type = isHidden ? 'text' : 'password';
-  
-  // Swap icon if using FontAwesome or similar, otherwise fallback to opacity
+  const isVisible = isHidden;
+
+  if (btn) {
+    btn.classList.toggle('is-visible', isVisible);
+    btn.setAttribute('aria-pressed', String(isVisible));
+    btn.setAttribute('aria-label', isVisible ? 'Masquer le mot de passe' : 'Afficher le mot de passe');
+  }
+
+  if (!btn) return;
+
+  // Support both FontAwesome and inline SVG implementations
   const icon = btn.querySelector('i');
   if (icon) {
-    icon.className = isHidden ? 'fas fa-eye-slash' : 'fas fa-eye';
+    icon.className = isVisible ? 'fas fa-eye-slash' : 'fas fa-eye';
   } else {
-    btn.style.opacity = isHidden ? '1' : '0.5';
+    const svg = btn.querySelector('svg');
+    if (svg) {
+      btn.innerHTML = getEyeIconSvg(isVisible);
+    }
   }
 }
 
@@ -181,8 +202,9 @@ function toggleFavorite(propertyId) {
 function fillDemo(email, password) {
   var emailInput    = document.getElementById('email');
   var passwordInput = document.getElementById('password');
+  var safePassword  = password || 'Password123!';
   if (emailInput)    emailInput.value    = email;
-  if (passwordInput) passwordInput.value = password;
+  if (passwordInput) passwordInput.value = safePassword;
 }
 
 // --- Confirm on destructive forms ---

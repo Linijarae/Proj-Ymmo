@@ -14,34 +14,36 @@
       <h1 class="auth-title">Créer un compte</h1>
       <p class="auth-subtitle">Rejoignez la communauté Ymmo gratuitement</p>
 
-      {{with .Data}}
-      {{if .Error}}
-      <div class="alert alert--error">{{.Error}}</div>
+      {{$data := .Data}}
+      {{if $data}}
+      {{if $data.Error}}
+      <div class="alert alert--error">{{$data.Error}}</div>
+      {{end}}
       {{end}}
 
       <form action="/inscription" method="POST" class="auth-form">
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Prénom</label>
-            <input type="text" name="first_name" value="{{.FirstName}}" placeholder="Jean"
+            <input type="text" name="first_name" value="{{if $data}}{{$data.FirstName}}{{end}}" placeholder="Jean"
                    class="form-control" required autocomplete="given-name">
           </div>
           <div class="form-group">
             <label class="form-label">Nom</label>
-            <input type="text" name="last_name" value="{{.LastName}}" placeholder="Dupont"
+            <input type="text" name="last_name" value="{{if $data}}{{$data.LastName}}{{end}}" placeholder="Dupont"
                    class="form-control" required autocomplete="family-name">
           </div>
         </div>
 
         <div class="form-group">
           <label class="form-label">Adresse email</label>
-          <input type="email" name="email" value="{{.Email}}" placeholder="votre@email.fr"
+          <input type="email" name="email" value="{{if $data}}{{$data.Email}}{{end}}" placeholder="votre@email.fr"
                  class="form-control" required autocomplete="email">
         </div>
 
         <div class="form-group">
           <label class="form-label">Téléphone <span class="text-muted">(facultatif)</span></label>
-          <input type="tel" name="phone" value="{{.Phone}}" placeholder="06 12 34 56 78"
+          <input type="tel" name="phone" value="{{if $data}}{{$data.Phone}}{{end}}" placeholder="06 12 34 56 78"
                  class="form-control" autocomplete="tel">
         </div>
 
@@ -51,7 +53,7 @@
             <div class="input-with-toggle">
               <input type="password" name="password" placeholder="8 caractères minimum"
                      class="form-control" required minlength="8" id="pwd1" autocomplete="new-password">
-              <button type="button" class="input-toggle" onclick="togglePwd('pwd1',this)">
+              <button type="button" class="input-toggle" onclick="togglePwd('pwd1',this)" aria-label="Afficher le mot de passe">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
               </button>
             </div>
@@ -61,7 +63,7 @@
             <div class="input-with-toggle">
               <input type="password" name="confirm_password" placeholder="Répéter le mot de passe"
                      class="form-control" required minlength="8" id="pwd2" autocomplete="new-password">
-              <button type="button" class="input-toggle" onclick="togglePwd('pwd2',this)">
+              <button type="button" class="input-toggle" onclick="togglePwd('pwd2',this)" aria-label="Afficher le mot de passe">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
               </button>
             </div>
@@ -82,16 +84,11 @@
 
       <div class="auth-divider"><span>Déjà inscrit ?</span></div>
       <a href="/connexion" class="btn btn-outline btn-block">Se connecter</a>
-      {{end}}
     </div>
   </div>
 </section>
 
 <script>
-function togglePwd(id, btn) {
-  const input = document.getElementById(id);
-  input.type = input.type === 'password' ? 'text' : 'password';
-}
 document.getElementById('pwd1').addEventListener('input', function() {
   const val = this.value;
   const el = document.getElementById('pwStrength');

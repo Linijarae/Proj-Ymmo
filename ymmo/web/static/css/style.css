@@ -153,15 +153,61 @@ input, select, textarea, button { font-family: inherit; }
   gap: var(--sp-xl);
 }
 
+.nav-logo,
+.footer-logo,
+.auth-logo a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-sm);
+  color: inherit;
+}
+
 .nav-logo {
   font-family: var(--font-heading);
-  font-size: 1.6rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--gold);
   letter-spacing: 0.04em;
   flex-shrink: 0;
 }
 .nav-logo:hover { color: var(--gold-light); }
+
+.footer-logo {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.auth-logo {
+  margin-bottom: var(--sp-sm);
+}
+
+.auth-logo a {
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--gold);
+}
+
+.logo-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  font-size: 1rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.logo-text {
+  font-family: var(--font-heading);
+  font-size: 1em;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
 
 .nav-links {
   display: flex;
@@ -250,7 +296,7 @@ input, select, textarea, button { font-family: inherit; }
   flex-shrink: 0;
 }
 .avatar-circle--sm  { width: 28px; height: 28px; font-size: 0.7rem; }
-.avatar-circle--xl  { width: 80px; height: 80px; font-size: 1.8rem; }
+.avatar-circle--xl  { width: 72px; height: 72px; font-size: 1.6rem; }
 
 /* Hamburger */
 .hamburger {
@@ -338,12 +384,12 @@ input, select, textarea, button { font-family: inherit; }
    ------------------------------------------------------------------- */
 .hero {
   position: relative;
-  min-height: 80vh;
+  min-height: 65vh;
   display: flex;
   align-items: center;
   overflow: hidden;
-  background: radial-gradient(ellipse at 60% 40%, rgba(201,168,76,0.08) 0%, transparent 60%),
-              radial-gradient(ellipse at 20% 80%, rgba(61,191,184,0.06) 0%, transparent 50%),
+  background: radial-gradient(ellipse 400px 300px at 60% 40%, rgba(201,168,76,0.03) 0%, transparent 60%),
+              radial-gradient(ellipse 350px 250px at 20% 80%, rgba(61,191,184,0.02) 0%, transparent 50%),
               var(--bg-primary);
 }
 .hero::after {
@@ -372,19 +418,20 @@ input, select, textarea, button { font-family: inherit; }
 .hero-tag::before { content: ''; display: block; width: 24px; height: 1px; background: var(--teal); }
 
 .hero-title {
-  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-size: clamp(2rem, 4.5vw, 3.4rem);
   font-weight: 900;
-  line-height: 1.1;
+  line-height: 1.15;
   margin-bottom: var(--sp-lg);
   color: var(--text-primary);
 }
 .hero-title .text-gold { display: block; }
 
 .hero-subtitle {
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   color: var(--text-secondary);
   max-width: 520px;
   margin-bottom: var(--sp-xl);
+  line-height: 1.7;
 }
 
 .hero-actions { display: flex; gap: var(--sp-md); flex-wrap: wrap; }
@@ -794,7 +841,7 @@ input, select, textarea, button { font-family: inherit; }
   border: 1px solid var(--border);
 }
 .spec-item { text-align: center; }
-.spec-icon { font-size: 1.3rem; margin-bottom: var(--sp-xs); }
+.spec-icon { font-size: 1.15rem; line-height: 1; margin-bottom: var(--sp-xs); display: inline-flex; align-items: center; justify-content: center; min-height: 1.25rem; }
 .spec-value { font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700; color: var(--gold); }
 .spec-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
 
@@ -882,22 +929,26 @@ input, select, textarea, button { font-family: inherit; }
 /* -------------------------------------------------------------------
    10. Forms (global)
    ------------------------------------------------------------------- */
-.form-group { display: flex; flex-direction: column; gap: var(--sp-xs); }
-.form-label { font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+.form-group { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
+.form-label { font-size: 0.88rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
 .required { color: var(--gold); }
 .label-optional { font-weight: 400; color: var(--text-muted); text-transform: none; letter-spacing: 0; }
 .form-hint { font-size: 0.75rem; color: var(--text-muted); }
-.form-input, .form-select, .form-textarea {
+.form-input, .form-control, .form-select, .form-textarea {
   background: var(--bg-elevated);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   color: var(--text-primary);
-  padding: 0.65rem 0.875rem;
-  font-size: 0.9rem;
+  width: 100%;
+  min-height: 44px;
+  padding: 0.78rem 1rem;
+  font-size: 0.96rem;
+  line-height: 1.35;
   outline: none;
   transition: border-color var(--transition), box-shadow var(--transition);
 }
 .form-input:focus,
+.form-control:focus,
 .form-select:focus,
 .form-textarea:focus {
   border-color: var(--gold);
@@ -917,6 +968,7 @@ input, select, textarea, button { font-family: inherit; }
 /* Input with icon */
 .input-icon-wrap { position: relative; }
 .input-icon-wrap .form-input { padding-right: 44px; width: 100%; }
+.input-icon-wrap .form-control { padding-right: 44px; width: 100%; }
 .input-icon-btn {
   position: absolute;
   right: 12px;
@@ -925,11 +977,45 @@ input, select, textarea, button { font-family: inherit; }
   background: none;
   border: none;
   color: var(--text-muted);
+  width: 28px;
+  height: 28px;
   padding: 0;
+  cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition), background var(--transition);
 }
-.input-icon-btn:hover { color: var(--gold); }
+.input-icon-btn:hover { color: var(--gold); background: var(--gold-subtle); }
+.input-icon-btn svg { width: 18px; height: 18px; pointer-events: none; }
+
+/* Input with password toggle */
+.input-with-toggle { position: relative; }
+.input-with-toggle .form-input,
+.input-with-toggle .form-control { padding-right: 44px; width: 100%; }
+.input-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  transition: color var(--transition), background var(--transition);
+}
+.input-toggle:hover { color: var(--gold); background: var(--gold-subtle); }
+.input-toggle.is-visible,
+.input-icon-btn.is-visible { color: var(--teal); }
+.input-toggle svg { width: 18px; height: 18px; pointer-events: none; }
 
 /* Checkboxes */
 .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--sp-md); }
@@ -1006,14 +1092,6 @@ input, select, textarea, button { font-family: inherit; }
   padding: var(--sp-2xl);
   box-shadow: var(--shadow-lg);
 }
-.auth-logo {
-  font-family: var(--font-heading);
-  font-size: 2rem;
-  font-weight: 900;
-  color: var(--gold);
-  text-align: center;
-  margin-bottom: var(--sp-xs);
-}
 .auth-tagline { text-align: center; color: var(--text-muted); font-size: 0.85rem; margin-bottom: var(--sp-xl); }
 .auth-title { font-size: 1.5rem; text-align: center; margin-bottom: var(--sp-xs); }
 .auth-subtitle { text-align: center; color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--sp-xl); }
@@ -1071,7 +1149,7 @@ input, select, textarea, button { font-family: inherit; }
 }
 .kpi-card:hover { transform: translateY(-2px); border-color: var(--gold-border); }
 .kpi-card--large { padding: var(--sp-xl); }
-.kpi-icon { font-size: 1.8rem; margin-bottom: var(--sp-sm); }
+.kpi-icon { font-size: 1.45rem; line-height: 1; margin-bottom: var(--sp-sm); display: inline-flex; align-items: center; justify-content: center; min-height: 1.5rem; }
 .kpi-icon--gold { filter: drop-shadow(0 0 8px rgba(201,168,76,0.4)); }
 .kpi-icon--teal { filter: drop-shadow(0 0 8px rgba(61,191,184,0.4)); }
 .kpi-value { font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: var(--gold); }
@@ -1102,7 +1180,7 @@ input, select, textarea, button { font-family: inherit; }
 .quick-action-card:hover { border-color: var(--gold-border); transform: translateY(-2px); color: var(--text-primary); }
 .quick-action-card--gold { border-color: var(--gold-border); background: var(--gold-subtle); }
 .quick-action-card--gold:hover { background: var(--gold); color: var(--bg-primary); }
-.qa-icon { font-size: 2rem; }
+.qa-icon { font-size: 1.5rem; line-height: 1; display: inline-flex; align-items: center; justify-content: center; min-height: 1.6rem; }
 .quick-action-card h3 { font-family: var(--font-heading); font-size: 0.95rem; margin: 0; }
 .quick-action-card p { color: var(--text-muted); font-size: 0.78rem; }
 
@@ -1183,7 +1261,7 @@ input, select, textarea, button { font-family: inherit; }
   gap: var(--sp-xs);
 }
 .admin-agency-header { display: flex; align-items: center; gap: var(--sp-sm); margin-bottom: var(--sp-sm); }
-.admin-agency-icon { font-size: 1.5rem; }
+.admin-agency-icon { font-size: 1.2rem; line-height: 1; display: inline-flex; align-items: center; justify-content: center; min-width: 1.35rem; }
 .admin-agency-name { font-family: var(--font-heading); font-size: 1rem; font-weight: 700; }
 .admin-agency-desc { color: var(--text-muted); }
 .admin-agency-actions { display: flex; gap: var(--sp-sm); margin-top: auto; padding-top: var(--sp-md); border-top: 1px solid var(--border); }
@@ -1322,14 +1400,14 @@ input, select, textarea, button { font-family: inherit; }
 .agency-card:hover { border-color: var(--gold-border); transform: translateY(-2px); box-shadow: var(--shadow-gold); }
 .agency-card-header { display: flex; align-items: center; gap: var(--sp-md); }
 .agency-card-icon {
-  width: 52px; height: 52px;
+  width: 48px; height: 48px;
   background: var(--gold-subtle);
   border: 1px solid var(--gold-border);
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   flex-shrink: 0;
 }
 .agency-card-name { font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700; }
@@ -1340,14 +1418,14 @@ input, select, textarea, button { font-family: inherit; }
 /* Agency detail */
 .agency-detail-header { display: flex; align-items: center; gap: var(--sp-xl); margin-bottom: var(--sp-xl); flex-wrap: wrap; }
 .agency-detail-icon {
-  width: 80px; height: 80px;
+  width: 64px; height: 64px;
   background: var(--gold-subtle);
   border: 1px solid var(--gold-border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.5rem;
+  font-size: 2rem;
   flex-shrink: 0;
 }
 .agency-detail-info {}
@@ -1584,14 +1662,14 @@ input, select, textarea, button { font-family: inherit; }
 }
 .feature-card:hover { border-color: var(--teal-border); }
 .feature-icon {
-  width: 48px; height: 48px;
+  width: 44px; height: 44px;
   background: var(--teal-subtle);
   border: 1px solid var(--teal-border);
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.3rem;
+  font-size: 1.15rem;
 }
 .feature-title { font-family: var(--font-heading); font-size: 1rem; font-weight: 700; }
 .feature-desc { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6; }
@@ -1618,13 +1696,49 @@ input, select, textarea, button { font-family: inherit; }
    24. Responsive
    ------------------------------------------------------------------- */
 @media (max-width: 1024px) {
+  .hero { min-height: 60vh; }
+  .hero-title { font-size: clamp(1.8rem, 4vw, 3rem); }
+
   .properties-layout { grid-template-columns: 240px 1fr; }
   .property-detail-layout { grid-template-columns: 1fr 300px; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
 }
 
+@media (max-width: 480px) {
+  :root { --sp-md: 0.8rem; --sp-lg: 0.9rem; --sp-xl: 1.2rem; }
+
+  .hero { min-height: 50vh; padding: var(--sp-lg) 0; }
+  .hero-title { font-size: clamp(1.4rem, 3vw, 2.2rem); margin-bottom: var(--sp-md); }
+  .hero-subtitle { font-size: 0.85rem; margin-bottom: var(--sp-lg); }
+  .hero-content { max-width: 100%; }
+
+  .search-bar { padding: var(--sp-sm) var(--sp-xs); gap: var(--sp-xs); }
+  .search-field { min-width: 120px; padding: 0.4rem var(--sp-sm); }
+  .search-btn { padding: 0.5rem 1rem; font-size: 0.8rem; }
+
+  .quick-filters { padding: var(--sp-lg) 0; }
+  .quick-filter-list { grid-template-columns: repeat(2, 1fr); gap: var(--sp-md); }
+  .quick-filter-item { padding: var(--sp-md); font-size: 0.75rem; }
+  .qf-icon { font-size: 1.3rem; }
+
+  .hero-stats { gap: var(--sp-md); flex-direction: column; margin-top: var(--sp-lg); }
+  .stat-sep { display: none; }
+
+  .features-grid { grid-template-columns: 1fr; }
+  .feature-icon { width: 36px; height: 36px; font-size: 0.9rem; }
+  .feature-title { font-size: 0.9rem; }
+  .feature-desc { font-size: 0.8rem; }
+
+  .cta-title { font-size: 1.4rem; }
+}
+
 @media (max-width: 768px) {
   :root { --sp-lg: 1rem; --sp-xl: 1.5rem; }
+
+  .hero { min-height: 55vh; }
+  .hero-title { font-size: clamp(1.6rem, 3.5vw, 2.6rem); }
+  .hero-subtitle { font-size: 0.9rem; }
+  .hero-stats { gap: var(--sp-lg); margin-top: var(--sp-xl); }
 
   .nav-links, .nav-actions { display: none; }
   .hamburger { display: flex; }
@@ -1650,6 +1764,24 @@ input, select, textarea, button { font-family: inherit; }
   .form-row, .form-row--3 { grid-template-columns: 1fr; }
   .contact-row { grid-template-columns: 1fr; }
 
+  .form-group { gap: 0.45rem; }
+  .form-label { font-size: 0.92rem; }
+  .form-input,
+  .form-control,
+  .form-select,
+  .form-textarea { font-size: 1rem; padding: 0.85rem 1rem; }
+  .form-actions { flex-wrap: wrap; }
+
+  .kpi-icon { font-size: 1.3rem; }
+  .qa-icon { font-size: 1.35rem; }
+  .spec-icon { font-size: 1.05rem; }
+
+  .flash-wrap {
+    left: var(--sp-md);
+    right: var(--sp-md);
+    max-width: none;
+  }
+
   .kpi-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
@@ -1661,6 +1793,16 @@ input, select, textarea, button { font-family: inherit; }
   .kpi-grid        { grid-template-columns: 1fr 1fr; }
   .hero-stats      { gap: var(--sp-lg); }
   .hero-stat-value { font-size: 1.5rem; }
+
+  .form-label { font-size: 0.9rem; }
+  .input-toggle,
+  .input-icon-btn {
+    right: 10px;
+    width: 26px;
+    height: 26px;
+  }
+  .agency-card-icon { width: 46px; height: 46px; font-size: 1.15rem; }
+  .agency-detail-icon { width: 64px; height: 64px; font-size: 1.9rem; }
 }
 
 /* -------------------------------------------------------------------

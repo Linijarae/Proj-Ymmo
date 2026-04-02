@@ -8,6 +8,21 @@ import (
 	"ymmo/internal/models"
 )
 
+// convertPlaceholders converts ? placeholders to $1, $2, etc. for PostgreSQL
+func convertPlaceholders(query string) string {
+	var result strings.Builder
+	placeholderCount := 0
+	for i := 0; i < len(query); i++ {
+		if query[i] == '?' {
+			placeholderCount++
+			fmt.Fprintf(&result, "$%d", placeholderCount)
+		} else {
+			result.WriteByte(query[i])
+		}
+	}
+	return result.String()
+}
+
 // UserRepository gère les opérations CRUD sur les utilisateurs
 type UserRepository struct {
 	db *sql.DB
@@ -23,8 +38,8 @@ func (r *UserRepository) FindByID(id int64) (*models.User, error) {
 	u := &models.User{}
 	var agencyID sql.NullInt64
 	err := r.db.QueryRow(
-		`SELECT id, email, password_hash, first_name, last_name, phone, role, agency_id, avatar, is_active, created_at, updated_at
-		 FROM users WHERE id = ? AND is_active = 1`, id,
+		convertPlaceholders(`SELECT id, email, password_hash, first_name, last_name, phone, role, agency_id, avatar, is_active, created_at, updated_at
+		 FROM users WHERE id = ? AND is_active = 1`), id,
 	).Scan(&u.ID, &u.Email, &u.PasswordHash, &u.FirstName, &u.LastName, &u.Phone,
 		&u.Role, &agencyID, &u.Avatar, &u.IsActive, &u.CreatedAt, &u.UpdatedAt)
 	if err == sql.ErrNoRows {
@@ -44,8 +59,8 @@ func (r *UserRepository) FindByEmail(email string) (*models.User, error) {
 	u := &models.User{}
 	var agencyID sql.NullInt64
 	err := r.db.QueryRow(
-		`SELECT id, email, password_hash, first_name, last_name, phone, role, agency_id, avatar, is_active, created_at, updated_at
-		 FROM users WHERE email = ?`, email,
+		convertPlaceholders(`SELECT id, email, password_hash, first_name, last_name, phone, role, agency_id, avatar, is_active, created_at, updated_at
+		 FROM users WHERE email = ?`), email,
 	).Scan(&u.ID, &u.Email, &u.PasswordHash, &u.FirstName, &u.LastName, &u.Phone,
 		&u.Role, &agencyID, &u.Avatar, &u.IsActive, &u.CreatedAt, &u.UpdatedAt)
 	if err == sql.ErrNoRows {
@@ -63,8 +78,8 @@ func (r *UserRepository) FindByEmail(email string) (*models.User, error) {
 // Create crée un nouvel utilisateur
 func (r *UserRepository) Create(u *models.User) error {
 	res, err := r.db.Exec(
-		`INSERT INTO users (email, password_hash, first_name, last_name, phone, role, agency_id, is_active)
-		 VALUES (?,?,?,?,?,?,?,1)`,
+		convertPlaceholders(`INSERT INTO users (email, password_hash, first_name, last_name, phone, role, agency_id, is_active)
+		 VALUES (?,?,?,?,?,?,?,1)`),
 		u.Email, u.PasswordHash, u.FirstName, u.LastName, u.Phone, u.Role, sqlNullInt64(u.AgencyID),
 	)
 	if err != nil {
@@ -79,8 +94,8 @@ func (r *UserRepository) Create(u *models.User) error {
 // Update met à jour un utilisateur
 func (r *UserRepository) Update(u *models.User) error {
 	_, err := r.db.Exec(
-		`UPDATE users SET first_name=?, last_name=?, phone=?, avatar=?, updated_at=CURRENT_TIMESTAMP
-		 WHERE id=?`,
+		convertPlaceholders(`UPDATE users SET first_name=?, last_name=?, phone=?, avatar=?, updated_at=CURRENT_TIMESTAMP
+		 WHERE id=?`),
 		u.FirstName, u.LastName, u.Phone, u.Avatar, u.ID,
 	)
 	return err
@@ -89,7 +104,7 @@ func (r *UserRepository) Update(u *models.User) error {
 // UpdatePassword met à jour le mot de passe
 func (r *UserRepository) UpdatePassword(userID int64, hash string) error {
 	_, err := r.db.Exec(
-		"UPDATE users SET password_hash=?, updated_at=CURRENT_TIMESTAMP WHERE id=?", hash, userID,
+		convertPlaceholders("UPDATE users SET password_hash=?, updated_at=CURRENT_TIMESTAMP WHERE id=?"), hash, userID,
 	)
 	return err
 }
@@ -97,8 +112,8 @@ func (r *UserRepository) UpdatePassword(userID int64, hash string) error {
 // ListByAgency retourne les utilisateurs d'une agence
 func (r *UserRepository) ListByAgency(agencyID int64) ([]*models.User, error) {
 	rows, err := r.db.Query(
-		`SELECT id, email, first_name, last_name, phone, role, agency_id, avatar, is_active, created_at, updated_at
-		 FROM users WHERE agency_id = ? AND role IN ('agent','director') ORDER BY last_name`,
+		convertPlaceholders(`SELECT id, email, first_name, last_name, phone, role, agency_id, avatar, is_active, created_at, updated_at
+		 FROM users WHERE agency_id = ? AND role IN ('agent','director') ORDER BY last_name`),
 		agencyID,
 	)
 	if err != nil {
@@ -118,7 +133,7 @@ func (r *UserRepository) ListAll(role string) ([]*models.User, error) {
 		args = append(args, role)
 	}
 	query += " ORDER BY created_at DESC"
-	rows, err := r.db.Query(query, args...)
+	rows, err := r.db.Query(convertPlaceholders(query), args...)
 	if err != nil {
 		return nil, err
 	}
@@ -135,13 +150,13 @@ func (r *UserRepository) Count(role string) (int, error) {
 		args = append(args, role)
 	}
 	var count int
-	return count, r.db.QueryRow(query, args...).Scan(&count)
+	return count, r.db.QueryRow(convertPlaceholders(query), args...).Scan(&count)
 }
 
 // SetRole met à jour le rôle d'un utilisateur
 func (r *UserRepository) SetRole(userID int64, role models.Role, agencyID *int64) error {
 	_, err := r.db.Exec(
-		"UPDATE users SET role=?, agency_id=?, updated_at=CURRENT_TIMESTAMP WHERE id=?",
+		convertPlaceholders("UPDATE users SET role=?, agency_id=?, updated_at=CURRENT_TIMESTAMP WHERE id=?"),
 		role, sqlNullInt64(agencyID), userID,
 	)
 	return err
@@ -153,7 +168,7 @@ func (r *UserRepository) SetActive(userID int64, active bool) error {
 	if active {
 		v = 1
 	}
-	_, err := r.db.Exec("UPDATE users SET is_active=? WHERE id=?", v, userID)
+	_, err := r.db.Exec(convertPlaceholders("UPDATE users SET is_active=? WHERE id=?"), v, userID)
 	return err
 }
 
@@ -190,11 +205,11 @@ func NewPropertyRepository(db *sql.DB) *PropertyRepository {
 func (r *PropertyRepository) FindByID(id int64) (*models.Property, error) {
 	p := &models.Property{}
 	err := r.db.QueryRow(
-		`SELECT id, title, description, price, type, sub_type, status, surface, rooms, bedrooms, bathrooms,
+		convertPlaceholders(`SELECT id, title, description, price, type, sub_type, status, surface, rooms, bedrooms, bathrooms,
 		        floor, total_floors, garage, parking, garden, pool, elevator,
 		        address, city, zip_code, department, latitude, longitude,
 		        agency_id, agent_id, is_featured, created_at, updated_at
-		 FROM properties WHERE id = ?`, id,
+		 FROM properties WHERE id = ?`), id,
 	).Scan(
 		&p.ID, &p.Title, &p.Description, &p.Price, &p.Type, &p.SubType, &p.Status,
 		&p.Surface, &p.Rooms, &p.Bedrooms, &p.Bathrooms,
@@ -272,7 +287,7 @@ func (r *PropertyRepository) List(f models.PropertyFilter) ([]*models.Property, 
 
 	var total int
 	if err := r.db.QueryRow(
-		"SELECT COUNT(*) FROM properties WHERE "+whereClause, args...,
+		convertPlaceholders("SELECT COUNT(*) FROM properties WHERE "+whereClause), args...,
 	).Scan(&total); err != nil {
 		return nil, 0, err
 	}
@@ -287,12 +302,12 @@ func (r *PropertyRepository) List(f models.PropertyFilter) ([]*models.Property, 
 	args = append(args, f.Limit, offset)
 
 	rows, err := r.db.Query(
-		`SELECT id, title, description, price, type, sub_type, status, surface, rooms, bedrooms, bathrooms,
+		convertPlaceholders(`SELECT id, title, description, price, type, sub_type, status, surface, rooms, bedrooms, bathrooms,
 		        floor, total_floors, garage, parking, garden, pool, elevator,
 		        address, city, zip_code, department, latitude, longitude,
 		        agency_id, agent_id, is_featured, created_at, updated_at
 		 FROM properties WHERE `+whereClause+
-			` ORDER BY is_featured DESC, created_at DESC LIMIT ? OFFSET ?`,
+			` ORDER BY is_featured DESC, created_at DESC LIMIT ? OFFSET ?`),
 		args...,
 	)
 	if err != nil {
@@ -339,12 +354,12 @@ func (r *PropertyRepository) ListFeatured(limit int) ([]*models.Property, error)
 // Create crée un nouveau bien
 func (r *PropertyRepository) Create(p *models.Property) error {
 	res, err := r.db.Exec(
-		`INSERT INTO properties 
+		convertPlaceholders(`INSERT INTO properties 
 		 (title, description, price, type, sub_type, status, surface, rooms, bedrooms, bathrooms,
 		  floor, total_floors, garage, parking, garden, pool, elevator,
 		  address, city, zip_code, department, latitude, longitude,
 		  agency_id, agent_id, is_featured)
-		 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+		 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`),
 		p.Title, p.Description, p.Price, p.Type, p.SubType, p.Status,
 		p.Surface, p.Rooms, p.Bedrooms, p.Bathrooms,
 		p.Floor, p.TotalFloors, boolInt(p.Garage), boolInt(p.Parking),
@@ -362,13 +377,13 @@ func (r *PropertyRepository) Create(p *models.Property) error {
 // Update met à jour un bien
 func (r *PropertyRepository) Update(p *models.Property) error {
 	_, err := r.db.Exec(
-		`UPDATE properties SET
+		convertPlaceholders(`UPDATE properties SET
 		 title=?, description=?, price=?, type=?, sub_type=?, status=?,
 		 surface=?, rooms=?, bedrooms=?, bathrooms=?, floor=?, total_floors=?,
 		 garage=?, parking=?, garden=?, pool=?, elevator=?,
 		 address=?, city=?, zip_code=?, department=?,
 		 is_featured=?, updated_at=CURRENT_TIMESTAMP
-		 WHERE id=?`,
+		 WHERE id=?`),
 		p.Title, p.Description, p.Price, p.Type, p.SubType, p.Status,
 		p.Surface, p.Rooms, p.Bedrooms, p.Bathrooms, p.Floor, p.TotalFloors,
 		boolInt(p.Garage), boolInt(p.Parking), boolInt(p.Garden), boolInt(p.Pool), boolInt(p.Elevator),
@@ -380,14 +395,14 @@ func (r *PropertyRepository) Update(p *models.Property) error {
 
 // Delete supprime un bien
 func (r *PropertyRepository) Delete(id int64) error {
-	_, err := r.db.Exec("DELETE FROM properties WHERE id=?", id)
+	_, err := r.db.Exec(convertPlaceholders("DELETE FROM properties WHERE id=?"), id)
 	return err
 }
 
 // AddImage ajoute une image à un bien
 func (r *PropertyRepository) AddImage(img *models.PropertyImage) error {
 	res, err := r.db.Exec(
-		"INSERT INTO property_images (property_id, url, is_primary, sort_order) VALUES (?,?,?,?)",
+		convertPlaceholders("INSERT INTO property_images (property_id, url, is_primary, sort_order) VALUES (?,?,?,?)"),
 		img.PropertyID, img.URL, boolInt(img.IsPrimary), img.SortOrder,
 	)
 	if err != nil {
@@ -399,7 +414,7 @@ func (r *PropertyRepository) AddImage(img *models.PropertyImage) error {
 
 // DeleteImage supprime une image
 func (r *PropertyRepository) DeleteImage(imageID int64) error {
-	_, err := r.db.Exec("DELETE FROM property_images WHERE id=?", imageID)
+	_, err := r.db.Exec(convertPlaceholders("DELETE FROM property_images WHERE id=?"), imageID)
 	return err
 }
 
@@ -412,14 +427,14 @@ func (r *PropertyRepository) Count(status string) (int, error) {
 		args = append(args, status)
 	}
 	var count int
-	return count, r.db.QueryRow(query, args...).Scan(&count)
+	return count, r.db.QueryRow(convertPlaceholders(query), args...).Scan(&count)
 }
 
 // CountByAgency retourne le nombre de biens par agence
 func (r *PropertyRepository) CountByAgency(agencyID int64) (int, error) {
 	var count int
 	return count, r.db.QueryRow(
-		"SELECT COUNT(*) FROM properties WHERE agency_id = ?", agencyID,
+		convertPlaceholders("SELECT COUNT(*) FROM properties WHERE agency_id = ?"), agencyID,
 	).Scan(&count)
 }
 
@@ -442,8 +457,8 @@ func (r *PropertyRepository) ListByAgent(agentID int64) ([]*models.Property, err
 // CityStats retourne les statistiques par ville
 func (r *PropertyRepository) CityStats(limit int) ([]models.CityStats, error) {
 	rows, err := r.db.Query(
-		`SELECT city, COUNT(*) as cnt, AVG(price) as avg_price
-		 FROM properties GROUP BY city ORDER BY cnt DESC LIMIT ?`, limit,
+		convertPlaceholders(`SELECT city, COUNT(*) as cnt, AVG(price) as avg_price
+		 FROM properties GROUP BY city ORDER BY cnt DESC LIMIT ?`), limit,
 	)
 	if err != nil {
 		return nil, err
@@ -463,10 +478,10 @@ func (r *PropertyRepository) CityStats(limit int) ([]models.CityStats, error) {
 // MonthlyStats retourne les statistiques mensuelles sur 12 mois
 func (r *PropertyRepository) MonthlyStats() ([]models.MonthlyStats, error) {
 	rows, err := r.db.Query(
-		`SELECT strftime('%Y', created_at) as year, strftime('%m', created_at) as month, COUNT(*) as total
+		convertPlaceholders(`SELECT to_char(created_at, 'YYYY') as year, to_char(created_at, 'MM') as month, COUNT(*) as total
 		 FROM properties
-		 WHERE created_at >= date('now', '-12 months')
-		 GROUP BY year, month ORDER BY year, month`,
+		 WHERE created_at >= CURRENT_DATE - INTERVAL '12 months'
+		 GROUP BY to_char(created_at, 'YYYY'), to_char(created_at, 'MM') ORDER BY year, month`),
 	)
 	if err != nil {
 		return nil, err
@@ -492,7 +507,7 @@ func (r *PropertyRepository) MonthlyStats() ([]models.MonthlyStats, error) {
 
 func (r *PropertyRepository) getImages(propertyID int64) ([]models.PropertyImage, error) {
 	rows, err := r.db.Query(
-		"SELECT id, property_id, url, is_primary, sort_order FROM property_images WHERE property_id = ? ORDER BY is_primary DESC, sort_order",
+		convertPlaceholders("SELECT id, property_id, url, is_primary, sort_order FROM property_images WHERE property_id = ? ORDER BY is_primary DESC, sort_order"),
 		propertyID,
 	)
 	if err != nil {
@@ -527,7 +542,7 @@ func NewFavoriteRepository(db *sql.DB) *FavoriteRepository {
 // Add ajoute un favori
 func (r *FavoriteRepository) Add(userID, propertyID int64) error {
 	_, err := r.db.Exec(
-		"INSERT OR IGNORE INTO favorites (user_id, property_id) VALUES (?,?)",
+		convertPlaceholders("INSERT OR IGNORE INTO favorites (user_id, property_id) VALUES (?,?)"),
 		userID, propertyID,
 	)
 	return err
@@ -536,7 +551,7 @@ func (r *FavoriteRepository) Add(userID, propertyID int64) error {
 // Remove supprime un favori
 func (r *FavoriteRepository) Remove(userID, propertyID int64) error {
 	_, err := r.db.Exec(
-		"DELETE FROM favorites WHERE user_id=? AND property_id=?",
+		convertPlaceholders("DELETE FROM favorites WHERE user_id=? AND property_id=?"),
 		userID, propertyID,
 	)
 	return err
@@ -546,7 +561,7 @@ func (r *FavoriteRepository) Remove(userID, propertyID int64) error {
 func (r *FavoriteRepository) IsFavorite(userID, propertyID int64) (bool, error) {
 	var count int
 	err := r.db.QueryRow(
-		"SELECT COUNT(*) FROM favorites WHERE user_id=? AND property_id=?",
+		convertPlaceholders("SELECT COUNT(*) FROM favorites WHERE user_id=? AND property_id=?"),
 		userID, propertyID,
 	).Scan(&count)
 	return count > 0, err
@@ -555,7 +570,7 @@ func (r *FavoriteRepository) IsFavorite(userID, propertyID int64) (bool, error) 
 // ListByUser retourne les favoris d'un utilisateur
 func (r *FavoriteRepository) ListByUser(userID int64) ([]int64, error) {
 	rows, err := r.db.Query(
-		"SELECT property_id FROM favorites WHERE user_id=?", userID,
+		convertPlaceholders("SELECT property_id FROM favorites WHERE user_id=?"), userID,
 	)
 	if err != nil {
 		return nil, err
@@ -587,8 +602,8 @@ func NewContactRepository(db *sql.DB) *ContactRepository {
 // Create crée une demande de contact
 func (r *ContactRepository) Create(c *models.ContactRequest) error {
 	res, err := r.db.Exec(
-		`INSERT INTO contact_requests (user_id, property_id, agent_id, full_name, email, phone, message, status)
-		 VALUES (?,?,?,?,?,?,?,'pending')`,
+		convertPlaceholders(`INSERT INTO contact_requests (user_id, property_id, agent_id, full_name, email, phone, message, status)
+		 VALUES (?,?,?,?,?,?,?,'pending')`),
 		sqlNullInt64(c.UserID), c.PropertyID, c.AgentID, c.FullName, c.Email, c.Phone, c.Message,
 	)
 	if err != nil {
@@ -601,8 +616,8 @@ func (r *ContactRepository) Create(c *models.ContactRequest) error {
 // ListByAgent retourne les demandes d'un agent
 func (r *ContactRepository) ListByAgent(agentID int64) ([]*models.ContactRequest, error) {
 	rows, err := r.db.Query(
-		`SELECT id, user_id, property_id, agent_id, full_name, email, phone, message, status, created_at
-		 FROM contact_requests WHERE agent_id=? ORDER BY created_at DESC`, agentID,
+		convertPlaceholders(`SELECT id, user_id, property_id, agent_id, full_name, email, phone, message, status, created_at
+		 FROM contact_requests WHERE agent_id=? ORDER BY created_at DESC`), agentID,
 	)
 	if err != nil {
 		return nil, err
@@ -626,7 +641,7 @@ func (r *ContactRepository) ListAll() ([]*models.ContactRequest, error) {
 
 // UpdateStatus met à jour le statut d'une demande
 func (r *ContactRepository) UpdateStatus(id int64, status string) error {
-	_, err := r.db.Exec("UPDATE contact_requests SET status=? WHERE id=?", status, id)
+	_, err := r.db.Exec(convertPlaceholders("UPDATE contact_requests SET status=? WHERE id=?"), status, id)
 	return err
 }
 
@@ -669,8 +684,8 @@ func NewAgencyRepository(db *sql.DB) *AgencyRepository {
 func (r *AgencyRepository) FindByID(id int64) (*models.Agency, error) {
 	a := &models.Agency{}
 	err := r.db.QueryRow(
-		`SELECT id, name, city, address, phone, email, website, description, logo, created_at
-		 FROM agencies WHERE id = ?`, id,
+		convertPlaceholders(`SELECT id, name, city, address, phone, email, website, description, logo, created_at
+		 FROM agencies WHERE id = ?`), id,
 	).Scan(&a.ID, &a.Name, &a.City, &a.Address, &a.Phone, &a.Email, &a.Website, &a.Description, &a.Logo, &a.CreatedAt)
 	if err == sql.ErrNoRows {
 		return nil, nil
@@ -705,8 +720,8 @@ func (r *AgencyRepository) ListAll() ([]*models.Agency, error) {
 // Create crée une nouvelle agence
 func (r *AgencyRepository) Create(a *models.Agency) error {
 	res, err := r.db.Exec(
-		`INSERT INTO agencies (name, city, address, phone, email, website, description, logo)
-		 VALUES (?,?,?,?,?,?,?,?)`,
+		convertPlaceholders(`INSERT INTO agencies (name, city, address, phone, email, website, description, logo)
+		 VALUES (?,?,?,?,?,?,?,?)`),
 		a.Name, a.City, a.Address, a.Phone, a.Email, a.Website, a.Description, a.Logo,
 	)
 	if err != nil {
@@ -719,8 +734,8 @@ func (r *AgencyRepository) Create(a *models.Agency) error {
 // Update met à jour une agence
 func (r *AgencyRepository) Update(a *models.Agency) error {
 	_, err := r.db.Exec(
-		`UPDATE agencies SET name=?, city=?, address=?, phone=?, email=?, website=?, description=?, logo=?
-		 WHERE id=?`,
+		convertPlaceholders(`UPDATE agencies SET name=?, city=?, address=?, phone=?, email=?, website=?, description=?, logo=?
+		 WHERE id=?`),
 		a.Name, a.City, a.Address, a.Phone, a.Email, a.Website, a.Description, a.Logo, a.ID,
 	)
 	return err
@@ -728,7 +743,7 @@ func (r *AgencyRepository) Update(a *models.Agency) error {
 
 // Delete supprime une agence
 func (r *AgencyRepository) Delete(id int64) error {
-	_, err := r.db.Exec("DELETE FROM agencies WHERE id=?", id)
+	_, err := r.db.Exec(convertPlaceholders("DELETE FROM agencies WHERE id=?"), id)
 	return err
 }
 
