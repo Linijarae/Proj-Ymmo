@@ -1,0 +1,70 @@
+{{define "nav"}}
+<nav class="navbar" id="navbar">
+  <div class="container nav-container">
+    <a href="/" class="nav-logo">
+      <span class="logo-icon">⬡</span>
+      <span class="logo-text">Ymmo</span>
+    </a>
+
+    <div class="nav-links" id="navLinks">
+      <a href="/biens" class="nav-link">Biens</a>
+      <a href="/biens?status=for_sale" class="nav-link">Acheter</a>
+      <a href="/biens?status=for_rent" class="nav-link">Louer</a>
+      <a href="/agences" class="nav-link">Agences</a>
+      <a href="/statistiques" class="nav-link">Marché</a>
+    </div>
+
+    <div class="nav-actions">
+      {{if .Claims}}
+        {{if canManage .Claims}}
+          <a href="/biens/nouveau" class="btn btn-sm btn-outline">+ Ajouter un bien</a>
+        {{end}}
+        <div class="nav-user" id="userMenu">
+          <button class="nav-user-btn" onclick="toggleUserMenu()">
+            <div class="user-avatar">{{initial .Claims.Email}}</div>
+            <span class="user-name">Mon espace</span>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+          <div class="user-dropdown" id="userDropdown">
+            <a href="/tableau-de-bord" class="dropdown-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              Tableau de bord
+            </a>
+            <a href="/profil" class="dropdown-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+              Mon profil
+            </a>
+            {{if isAdmin .Claims}}
+              <div class="dropdown-divider"></div>
+              <a href="/admin/utilisateurs" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+                Utilisateurs
+              </a>
+              <a href="/admin/agences" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+                Agences
+              </a>
+              <a href="/admin/contacts" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                Contacts
+              </a>
+            {{end}}
+            <div class="dropdown-divider"></div>
+            <a href="/deconnexion" class="dropdown-item dropdown-item--danger">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+              Déconnexion
+            </a>
+          </div>
+        </div>
+      {{else}}
+        <a href="/connexion" class="btn btn-sm btn-ghost">Connexion</a>
+        <a href="/inscription" class="btn btn-sm btn-gold">Inscription</a>
+      {{end}}
+    </div>
+
+    <button class="nav-burger" onclick="toggleMobileMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+{{end}}

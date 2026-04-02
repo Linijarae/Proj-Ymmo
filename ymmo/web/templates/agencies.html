@@ -1,0 +1,53 @@
+{{template "header" .}}
+{{template "nav" .}}
+{{template "flash" .}}
+
+<section class="page-hero page-hero--sm">
+  <div class="container">
+    <h1 class="page-title">Nos <span class="text-gold">agences</span></h1>
+    <p class="page-subtitle">13 agences à travers toute la France pour vous accompagner</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    {{with .Data}}
+    {{if .Agencies}}
+    <div class="agencies-list-grid">
+      {{range .Agencies}}
+      <a href="/agences/{{.ID}}" class="agency-list-card">
+        <div class="alc-header">
+          <div class="alc-icon">⬡</div>
+          <div class="alc-badge">Agence Ymmo</div>
+        </div>
+        <h2 class="alc-name">{{.Name}}</h2>
+        <div class="alc-info">
+          <div class="alc-info-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>{{.Address}}, {{.City}}</span>
+          </div>
+          {{if .Phone}}
+          <div class="alc-info-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.27h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <span>{{.Phone}}</span>
+          </div>
+          {{end}}
+          {{if .Email}}
+          <div class="alc-info-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span>{{.Email}}</span>
+          </div>
+          {{end}}
+        </div>
+        <div class="alc-footer">
+          <span class="alc-link">Voir l'agence →</span>
+        </div>
+      </a>
+      {{end}}
+    </div>
+    {{end}}
+    {{end}}
+  </div>
+</section>
+
+{{template "footer" .}}

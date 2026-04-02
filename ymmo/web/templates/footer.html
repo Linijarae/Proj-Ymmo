@@ -1,0 +1,63 @@
+{{define "footer"}}
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="/" class="footer-logo">
+          <span class="logo-icon">⬡</span>
+          <span class="logo-text">Ymmo</span>
+        </a>
+        <p class="footer-desc">Votre expert immobilier en France. Vente, achat et location de biens résidentiels et professionnels.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="LinkedIn" class="social-link">in</a>
+          <a href="#" aria-label="Instagram" class="social-link">ig</a>
+          <a href="#" aria-label="Facebook" class="social-link">fb</a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-title">Explorer</h4>
+        <ul class="footer-links">
+          <li><a href="/biens?status=for_sale">Acheter</a></li>
+          <li><a href="/biens?status=for_rent">Louer</a></li>
+          <li><a href="/biens?type=commercial">Professionnel</a></li>
+          <li><a href="/agences">Nos agences</a></li>
+          <li><a href="/statistiques">Marché immobilier</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-title">Agences</h4>
+        <ul class="footer-links">
+          <li><a href="/agences?city=Paris">Paris</a></li>
+          <li><a href="/agences?city=Lyon">Lyon</a></li>
+          <li><a href="/agences?city=Marseille">Marseille</a></li>
+          <li><a href="/agences?city=Nice">Nice</a></li>
+          <li><a href="/agences">Voir toutes →</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-title">Contact</h4>
+        <ul class="footer-links">
+          <li>📍 12 Cours Mirabeau<br>13100 Aix-en-Provence</li>
+          <li>📞 04 42 00 00 00</li>
+          <li>✉️ contact@ymmo.fr</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© {{currentYear}} Ymmo — Tous droits réservés</p>
+      <div class="footer-legal">
+        <a href="#">Mentions légales</a>
+        <a href="#">Politique de confidentialité</a>
+        <a href="#">CGU</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<script src="/static/js/main.js"></script>
+</body>
+</html>
+{{end}}

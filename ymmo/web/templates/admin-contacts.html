@@ -1,0 +1,90 @@
+{{template "header" .}}
+{{template "nav" .}}
+{{template "flash" .}}
+
+<section class="page-hero page-hero--sm">
+  <div class="container">
+    <h1 class="page-title">Demandes de <span class="text-gold">Contact</span></h1>
+    <p class="page-subtitle">{{with .Data}}{{with .Count}}{{.}} demande(s) au total{{end}}{{end}}</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    {{with .Data}}
+
+    <!-- Filters -->
+    <div class="admin-contacts-filters mb-lg">
+      <a href="/admin/contacts" class="filter-chip {{if not .StatusFilter}}filter-chip--active{{end}}">Toutes</a>
+      <a href="/admin/contacts?status=pending" class="filter-chip {{if eq .StatusFilter "pending"}}filter-chip--active{{end}}">
+        En attente
+      </a>
+      <a href="/admin/contacts?status=processed" class="filter-chip {{if eq .StatusFilter "processed"}}filter-chip--active{{end}}">
+        Traitées
+      </a>
+      <a href="/admin/contacts?status=closed" class="filter-chip {{if eq .StatusFilter "closed"}}filter-chip--active{{end}}">
+        Fermées
+      </a>
+    </div>
+
+    {{if .Contacts}}
+    <div class="contacts-list">
+      {{range .Contacts}}
+      <div class="contact-card-admin contact-card-admin--{{.Status}}">
+        <div class="contact-card-head">
+          <div class="contact-card-sender">
+            <div class="avatar-circle avatar-circle--sm">{{initial .FullName}}</div>
+            <div>
+              <strong>{{.FullName}}</strong>
+              <span class="text-muted text-sm">{{.Email}}</span>
+              {{if .Phone}}<span class="text-muted text-sm">· {{.Phone}}</span>{{end}}
+            </div>
+          </div>
+          <div class="contact-card-meta">
+            <span class="contact-status contact-status--{{.Status}}">{{contactStatusLabel .Status}}</span>
+            <span class="text-muted text-sm">{{formatDate .CreatedAt}}</span>
+          </div>
+        </div>
+
+        {{if .Property}}
+        <div class="contact-card-property">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+          <a href="/biens/{{.Property.ID}}" class="text-teal">{{.Property.Title}}</a>
+          <span class="text-muted text-sm">— {{.Property.City}}</span>
+        </div>
+        {{end}}
+
+        <div class="contact-card-message">
+          <p>{{.Message}}</p>
+        </div>
+
+        <form action="/admin/contacts" method="POST" class="contact-card-actions">
+          <input type="hidden" name="contact_id" value="{{.ID}}">
+          <div class="form-row form-row--tight">
+            <select name="status" class="form-select form-select--sm">
+              <option value="pending"   {{if eq .Status "pending"}}selected{{end}}>En attente</option>
+              <option value="processed" {{if eq .Status "processed"}}selected{{end}}>Traité</option>
+              <option value="closed"    {{if eq .Status "closed"}}selected{{end}}>Fermé</option>
+            </select>
+            <button type="submit" class="btn btn-sm btn-gold">Mettre à jour</button>
+          </div>
+        </form>
+      </div>
+      {{end}}
+    </div>
+
+    {{else}}
+    <div class="empty-state">
+      <div class="empty-icon">📭</div>
+      <h3>Aucune demande de contact</h3>
+      <p class="text-muted">
+        {{if .StatusFilter}}Aucune demande avec ce statut.{{else}}Aucune demande reçue pour l'instant.{{end}}
+      </p>
+    </div>
+    {{end}}
+
+    {{end}}{{/* end with .Data */}}
+  </div>
+</section>
+
+{{template "footer" .}}

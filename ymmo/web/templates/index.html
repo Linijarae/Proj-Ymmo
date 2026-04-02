@@ -1,0 +1,269 @@
+{{template "header" .}}
+{{template "nav" .}}
+{{template "flash" .}}
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-gradient"></div>
+    <div class="hero-pattern"></div>
+  </div>
+  <div class="container hero-content">
+    <div class="hero-badge">✦ Le réseau immobilier de confiance</div>
+    <h1 class="hero-title">
+      Trouvez le bien<br>
+      <span class="text-gold">qui vous ressemble</span>
+    </h1>
+    <p class="hero-subtitle">Plus de {{with .Data}}{{with .Summary}}{{.TotalProperties}}{{end}}{{end}} biens immobiliers à travers toute la France. Résidentiel, professionnel, achat, location — Ymmo vous accompagne.</p>
+
+    <!-- Barre de recherche -->
+    <form class="search-bar" action="/biens" method="GET">
+      <div class="search-bar-inner">
+        <div class="search-field search-field--main">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" name="q" placeholder="Ville, quartier, ligne de métro…" class="search-input">
+        </div>
+        <div class="search-divider"></div>
+        <div class="search-field search-field--toggle">
+          <div class="txn-toggle" role="group" aria-label="Type de transaction">
+            <label class="txn-opt">
+              <input type="radio" name="status" value="">
+              <span class="txn-inner">
+                <svg class="txn-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="16" y2="6"/><line x1="4" y1="10" x2="16" y2="10"/><line x1="4" y1="14" x2="16" y2="14"/></svg>
+                Tous
+              </span>
+            </label>
+            <label class="txn-opt txn-opt--buy">
+              <input type="radio" name="status" value="for_sale">
+              <span class="txn-inner">
+                <svg class="txn-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h3a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h3a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+                Acheter
+              </span>
+            </label>
+            <label class="txn-opt txn-opt--rent">
+              <input type="radio" name="status" value="for_rent">
+              <span class="txn-inner">
+                <svg class="txn-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clip-rule="evenodd"/></svg>
+                Louer
+              </span>
+            </label>
+          </div>
+        </div>
+        <div class="search-divider"></div>
+        <div class="search-field search-field--toggle">
+          <div class="cat-toggle" role="group" aria-label="Catégorie">
+            <label class="cat-opt">
+              <input type="radio" name="type" value="">
+              <span class="cat-inner">
+                <svg class="cat-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="11" y="3" width="6" height="6" rx="1"/><rect x="3" y="11" width="6" height="6" rx="1"/><rect x="11" y="11" width="6" height="6" rx="1"/></svg>
+                Tous
+              </span>
+            </label>
+            <label class="cat-opt cat-opt--resid">
+              <input type="radio" name="type" value="residential">
+              <span class="cat-inner">
+                <svg class="cat-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h3a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h3a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+                Résidentiel
+              </span>
+            </label>
+            <label class="cat-opt cat-opt--pro">
+              <input type="radio" name="type" value="commercial">
+              <span class="cat-inner">
+                <svg class="cat-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/></svg>
+                Pro
+              </span>
+            </label>
+          </div>
+        </div>
+        <button type="submit" class="search-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          Rechercher
+        </button>
+      </div>
+    </form>
+
+    <!-- Quick stats -->
+    {{with .Data}}{{with .Summary}}
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-value text-gold">{{.TotalForSale}}</span>
+        <span class="stat-label">Biens à vendre</span>
+      </div>
+      <div class="stat-sep">|</div>
+      <div class="stat-item">
+        <span class="stat-value text-gold">{{.TotalForRent}}</span>
+        <span class="stat-label">Biens à louer</span>
+      </div>
+      <div class="stat-sep">|</div>
+      <div class="stat-item">
+        <span class="stat-value text-gold">{{.TotalAgencies}}</span>
+        <span class="stat-label">Agences en France</span>
+      </div>
+      <div class="stat-sep">|</div>
+      <div class="stat-item">
+        <span class="stat-value text-gold">{{.TotalAgents}}</span>
+        <span class="stat-label">Experts immobiliers</span>
+      </div>
+    </div>
+    {{end}}{{end}}
+  </div>
+</section>
+
+<!-- FILTRES RAPIDES -->
+<section class="quick-filters">
+  <div class="container">
+    <div class="quick-filter-list">
+      <a href="/biens?sub_type=apartment" class="quick-filter-item">
+        <span class="qf-icon">🏢</span>
+        <span>Appartements</span>
+      </a>
+      <a href="/biens?sub_type=house" class="quick-filter-item">
+        <span class="qf-icon">🏠</span>
+        <span>Maisons</span>
+      </a>
+      <a href="/biens?sub_type=villa" class="quick-filter-item">
+        <span class="qf-icon">🏖</span>
+        <span>Villas</span>
+      </a>
+      <a href="/biens?sub_type=loft" class="quick-filter-item">
+        <span class="qf-icon">🏗</span>
+        <span>Lofts</span>
+      </a>
+      <a href="/biens?type=commercial" class="quick-filter-item">
+        <span class="qf-icon">🏪</span>
+        <span>Professionnel</span>
+      </a>
+      <a href="/biens?sub_type=studio" class="quick-filter-item">
+        <span class="qf-icon">🛋</span>
+        <span>Studios</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- BIENS VEDETTES -->
+{{with .Data}}
+{{if .FeaturedProperties}}
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <div class="section-eyebrow text-teal">Sélection exclusive</div>
+        <h2 class="section-title">Nos biens <span class="text-gold">coup de cœur</span></h2>
+      </div>
+      <a href="/biens" class="btn btn-outline">Voir tous les biens →</a>
+    </div>
+    <div class="properties-grid">
+      {{range .FeaturedProperties}}
+        {{template "property-card" .}}
+      {{end}}
+    </div>
+  </div>
+</section>
+{{end}}
+
+<!-- VILLES POPULAIRES -->
+{{if .CityStats}}
+<section class="section section--alt">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <div class="section-eyebrow text-teal">Destinations en vogue</div>
+        <h2 class="section-title">Les villes <span class="text-gold">les plus actives</span></h2>
+      </div>
+    </div>
+    <div class="cities-grid">
+      {{range .CityStats}}
+      <a href="/biens?city={{.City}}" class="city-card">
+        <div class="city-card-content">
+          <h3 class="city-name">{{.City}}</h3>
+          <div class="city-stats">
+            <span class="city-count">{{.Count}} biens</span>
+            <span class="city-price">Moy. {{formatPriceRaw .AvgPrice}}</span>
+          </div>
+        </div>
+        <div class="city-arrow">→</div>
+      </a>
+      {{end}}
+    </div>
+  </div>
+</section>
+{{end}}
+
+<!-- NOS AGENCES -->
+{{if .Agencies}}
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <div class="section-eyebrow text-teal">Réseau national</div>
+        <h2 class="section-title">Nos <span class="text-gold">agences</span> en France</h2>
+      </div>
+      <a href="/agences" class="btn btn-outline">Toutes nos agences →</a>
+    </div>
+    <div class="agencies-grid">
+      {{range $i, $a := .Agencies}}{{if lt $i 6}}
+      <a href="/agences/{{$a.ID}}" class="agency-card">
+        <div class="agency-card-icon">⬡</div>
+        <h3 class="agency-card-name">{{$a.Name}}</h3>
+        <p class="agency-card-city">{{$a.City}}</p>
+        <p class="agency-card-phone">{{$a.Phone}}</p>
+      </a>
+      {{end}}{{end}}
+    </div>
+  </div>
+</section>
+{{end}}
+{{end}}
+
+<!-- POURQUOI YMMO -->
+<section class="section section--alt">
+  <div class="container">
+    <div class="section-header section-header--center">
+      <div>
+        <div class="section-eyebrow text-teal">Notre engagement</div>
+        <h2 class="section-title">Pourquoi choisir <span class="text-gold">Ymmo ?</span></h2>
+      </div>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon feature-icon--gold">🏆</div>
+        <h3 class="feature-title">Expertise reconnue</h3>
+        <p class="feature-desc">Plus de 20 ans d'expérience dans l'immobilier résidentiel et professionnel à travers toute la France.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon feature-icon--teal">📊</div>
+        <h3 class="feature-title">Analyse de marché</h3>
+        <p class="feature-desc">Des outils d'analyse avancés pour vous guider dans vos décisions d'achat et d'investissement.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon feature-icon--gold">🤝</div>
+        <h3 class="feature-title">Accompagnement total</h3>
+        <p class="feature-desc">De la recherche à la signature, nos agents sont à vos côtés à chaque étape de votre projet.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon feature-icon--teal">🔒</div>
+        <h3 class="feature-title">Transactions sécurisées</h3>
+        <p class="feature-desc">Toutes nos transactions sont encadrées par des professionnels certifiés et conformes à la loi Hoguet.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA INSCRIPTION -->
+<section class="section cta-section">
+  <div class="container">
+    <div class="cta-block">
+      <div class="cta-content">
+        <h2 class="cta-title">Prêt à <span class="text-gold">concrétiser</span> votre projet ?</h2>
+        <p class="cta-desc">Créez votre compte gratuitement et accédez à l'ensemble de nos services : favoris, alertes, suivi de demandes.</p>
+        <div class="cta-actions">
+          <a href="/inscription" class="btn btn-gold btn-lg">Créer un compte</a>
+          <a href="/biens" class="btn btn-outline btn-lg">Parcourir les biens</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{{template "footer" .}}

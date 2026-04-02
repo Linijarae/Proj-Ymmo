@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">
+  <defs>
+    <linearGradient id="sky3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#72b7e8"/>
+      <stop offset="100%" stop-color="#daeeff"/>
+    </linearGradient>
+    <linearGradient id="wall3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e8dfc4"/>
+      <stop offset="100%" stop-color="#d8cf9c"/>
+    </linearGradient>
+    <linearGradient id="roof3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c06830"/>
+      <stop offset="100%" stop-color="#a05020"/>
+    </linearGradient>
+    <linearGradient id="garden3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3d9a3f"/>
+      <stop offset="100%" stop-color="#277528"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Ciel ensoleillé -->
+  <rect width="800" height="500" fill="url(#sky3)"/>
+
+  <!-- Soleil -->
+  <circle cx="680" cy="80" r="48" fill="#fff0a0" opacity="0.8"/>
+  <circle cx="680" cy="80" r="36" fill="#ffee80" opacity="0.9"/>
+  <!-- Rayons soleil -->
+  <line x1="680" y1="22" x2="680" y2="10" stroke="#ffe860" stroke-width="3" opacity="0.6"/>
+  <line x1="720" y1="38" x2="730" y2="28" stroke="#ffe860" stroke-width="3" opacity="0.6"/>
+  <line x1="740" y1="80" x2="752" y2="80" stroke="#ffe860" stroke-width="3" opacity="0.6"/>
+  <line x1="720" y1="122" x2="730" y2="132" stroke="#ffe860" stroke-width="3" opacity="0.6"/>
+  <line x1="640" y1="38" x2="630" y2="28" stroke="#ffe860" stroke-width="3" opacity="0.6"/>
+  <line x1="620" y1="80" x2="608" y2="80" stroke="#ffe860" stroke-width="3" opacity="0.6"/>
+
+  <!-- Nuages -->
+  <ellipse cx="200" cy="90" rx="100" ry="32" fill="white" opacity="0.9"/>
+  <ellipse cx="165" cy="95" rx="55" ry="26" fill="white" opacity="0.9"/>
+  <ellipse cx="245" cy="95" rx="60" ry="24" fill="white" opacity="0.9"/>
+
+  <ellipse cx="480" cy="110" rx="80" ry="25" fill="white" opacity="0.75"/>
+  <ellipse cx="450" cy="115" rx="45" ry="22" fill="white" opacity="0.8"/>
+  <ellipse cx="520" cy="115" rx="50" ry="20" fill="white" opacity="0.8"/>
+
+  <!-- Paysage lointain (collines) -->
+  <path d="M0 350 Q200 290 400 310 Q600 295 800 330 L800 500 L0 500Z" fill="#5aa840" opacity="0.3"/>
+
+  <!-- Jardin / pelouse -->
+  <rect x="0" y="420" width="800" height="80" fill="url(#garden3)"/>
+  <!-- Chemin -->
+  <polygon points="340,500 460,500 440,420 360,420" fill="#c8b888" opacity="0.7"/>
+
+  <!-- Haie/palissade clôture -->
+  <rect x="60" y="415" width="680" height="12" fill="#4a8030" rx="3"/>
+  <line x1="60" y1="420" x2="60" y2="430" stroke="#3a6028" stroke-width="4"/><line x1="80" y1="420" x2="80" y2="430" stroke="#3a6028" stroke-width="4"/><line x1="100" y1="420" x2="100" y2="430" stroke="#3a6028" stroke-width="4"/>
+  <line x1="120" y1="420" x2="120" y2="430" stroke="#3a6028" stroke-width="4"/><line x1="140" y1="420" x2="140" y2="430" stroke="#3a6028" stroke-width="4"/>
+  <line x1="660" y1="420" x2="660" y2="430" stroke="#3a6028" stroke-width="4"/><line x1="680" y1="420" x2="680" y2="430" stroke="#3a6028" stroke-width="4"/>
+  <line x1="700" y1="420" x2="700" y2="430" stroke="#3a6028" stroke-width="4"/><line x1="720" y1="420" x2="720" y2="430" stroke="#3a6028" stroke-width="4"/>
+
+  <!-- Corps principal de la maison -->
+  <rect x="160" y="270" width="480" height="155" fill="url(#wall3)" rx="2"/>
+
+  <!-- Toit principal (pignon) -->
+  <polygon points="140,270 660,270 620,180 180,180" fill="url(#roof3)"/>
+  <!-- Sous-toit côtés -->
+  <polygon points="140,270 180,180 160,182" fill="#904018" opacity="0.5"/>
+  <polygon points="660,270 620,180 640,183" fill="#904018" opacity="0.5"/>
+
+  <!-- Cheminée -->
+  <rect x="530" y="145" width="38" height="55" fill="#b06840"/>
+  <rect x="524" y="142" width="50" height="10" fill="#c07848"/>
+  <!-- fumée -->
+  <path d="M545 142 Q538 125 548 110 Q555 100 548 88" stroke="#aaa" stroke-width="3" fill="none" opacity="0.5" stroke-linecap="round"/>
+  <path d="M555 142 Q565 125 558 110 Q552 98 560 85" stroke="#aaa" stroke-width="2.5" fill="none" opacity="0.35" stroke-linecap="round"/>
+
+  <!-- Lucarne -->
+  <rect x="350" y="195" width="100" height="70" fill="#e8e0ca" rx="1"/>
+  <polygon points="340,195 460,195 400,160" fill="#b05028"/>
+  <rect x="358" y="200" width="40" height="60" fill="#3a70c0" opacity="0.6" rx="1"/>
+  <rect x="402" y="200" width="40" height="60" fill="#3a70c0" opacity="0.6" rx="1"/>
+  <rect x="348" y="195" width="104" height="5" fill="#c06030" opacity="0.7"/>
+  <line x1="400" y1="200" x2="400" y2="260" stroke="#c8b890" stroke-width="2" opacity="0.5"/>
+
+  <!-- Fenêtres rez-de-chaussée -->
+  <rect x="185" y="295" width="96" height="110" fill="#3a70c0" opacity="0.65" rx="1"/>
+  <rect x="185" y="295" width="96" height="110" stroke="#c8b890" stroke-width="2" fill="none" rx="1"/>
+  <line x1="233" y1="295" x2="233" y2="405" stroke="#c8b890" stroke-width="2" opacity="0.6"/>
+  <line x1="185" y1="348" x2="281" y2="348" stroke="#c8b890" stroke-width="2" opacity="0.5"/>
+  <line x1="188" y1="298" x2="196" y2="306" stroke="white" stroke-width="1.5" opacity="0.35"/>
+
+  <rect x="520" y="295" width="96" height="110" fill="#3a70c0" opacity="0.65" rx="1"/>
+  <rect x="520" y="295" width="96" height="110" stroke="#c8b890" stroke-width="2" fill="none" rx="1"/>
+  <line x1="568" y1="295" x2="568" y2="405" stroke="#c8b890" stroke-width="2" opacity="0.6"/>
+  <line x1="520" y1="348" x2="616" y2="348" stroke="#c8b890" stroke-width="2" opacity="0.5"/>
+  <line x1="523" y1="298" x2="531" y2="306" stroke="white" stroke-width="1.5" opacity="0.35"/>
+
+  <!-- Porte principale -->
+  <rect x="352" y="320" width="96" height="105" fill="#7a5030" rx="2"/>
+  <rect x="360" y="328" width="35" height="85" fill="#C9A84C" opacity="0.15" rx="1"/>
+  <rect x="405" y="328" width="35" height="85" fill="#C9A84C" opacity="0.15" rx="1"/>
+  <rect x="362" y="330" width="31" height="81" stroke="#C9A84C" stroke-width="1" fill="none" rx="1" opacity="0.5"/>
+  <rect x="407" y="330" width="31" height="81" stroke="#C9A84C" stroke-width="1" fill="none" rx="1" opacity="0.5"/>
+  <circle cx="396" cy="383" r="4.5" fill="#C9A84C"/>
+  <circle cx="404" cy="383" r="4.5" fill="#C9A84C"/>
+  <!-- marches porte -->
+  <rect x="338" y="420" width="124" height="6" fill="#d0c898"/>
+  <rect x="330" y="424" width="140" height="5" fill="#c8c088"/>
+
+  <!-- Volets fenêtres -->
+  <rect x="182" y="295" width="5" height="110" fill="#2c5025" rx="1"/>
+  <rect x="280" y="295" width="5" height="110" fill="#2c5025" rx="1"/>
+  <rect x="517" y="295" width="5" height="110" fill="#2c5025" rx="1"/>
+  <rect x="615" y="295" width="5" height="110" fill="#2c5025" rx="1"/>
+
+  <!-- Aile gauche (garage/annexe) -->
+  <rect x="60" y="310" width="110" height="115" fill="#ddd5b8" rx="1"/>
+  <polygon points="50,310 178,310 170,268 58,268" fill="#b86030" opacity="0.85"/>
+  <!-- Fenêtre annexe -->
+  <rect x="78" y="330" width="70" height="60" fill="#3a70c0" opacity="0.5" rx="1"/>
+  <rect x="78" y="330" width="70" height="60" stroke="#c8b890" stroke-width="1.5" fill="none" rx="1"/>
+  <line x1="113" y1="330" x2="113" y2="390" stroke="#c8b890" stroke-width="1.5" opacity="0.5"/>
+
+  <!-- Fleurs et arbustes jardin -->
+  <!-- Rosiers gauche porte -->
+  <circle cx="330" cy="418" r="14" fill="#2a6e20"/>
+  <circle cx="320" cy="420" r="10" fill="#256020"/>
+  <circle cx="340" cy="420" r="10" fill="#256020"/>
+  <circle cx="330" cy="412" r="6" fill="#e84060" opacity="0.8"/>
+  <circle cx="320" cy="416" r="5" fill="#e84060" opacity="0.7"/>
+  <circle cx="340" cy="414" r="4" fill="#ff6080" opacity="0.9"/>
+  <circle cx="325" cy="408" r="4" fill="#d83050" opacity="0.8"/>
+
+  <!-- Rosiers droite porte -->
+  <circle cx="470" cy="418" r="14" fill="#2a6e20"/>
+  <circle cx="460" cy="420" r="10" fill="#256020"/>
+  <circle cx="480" cy="420" r="10" fill="#256020"/>
+  <circle cx="470" cy="412" r="6" fill="#e84060" opacity="0.8"/>
+  <circle cx="460" cy="416" r="5" fill="#e84060" opacity="0.7"/>
+  <circle cx="480" cy="414" r="4" fill="#ff6080" opacity="0.9"/>
+
+  <!-- Grand arbre gauche -->
+  <rect x="32" y="340" width="12" height="90" fill="#6a4520"/>
+  <circle cx="38" cy="305" r="50" fill="#2a7a1a"/>
+  <circle cx="22" cy="325" r="32" fill="#246a16"/>
+  <circle cx="54" cy="325" r="32" fill="#246a16"/>
+
+  <!-- Arbre droit -->
+  <rect x="758" y="340" width="12" height="90" fill="#6a4520"/>
+  <circle cx="764" cy="305" r="50" fill="#2a7a1a"/>
+  <circle cx="748" cy="325" r="32" fill="#246a16"/>
+  <circle cx="780" cy="325" r="32" fill="#246a16"/>
+
+  <!-- Bande info -->
+  <rect x="0" y="462" width="800" height="38" fill="rgba(5,5,12,0.82)"/>
+  <text x="22" y="488" font-family="Georgia,serif" font-size="15" font-weight="bold" fill="#C9A84C">Maison de Famille avec Jardin</text>
+  <text x="778" y="488" font-family="Georgia,serif" font-size="12" fill="#3DBFB8" text-anchor="end">Ymmo Immobilier</text>
+</svg>

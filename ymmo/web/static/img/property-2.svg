@@ -1,0 +1,192 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">
+  <defs>
+    <linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4a90d9"/>
+      <stop offset="100%" stop-color="#c8e6ff"/>
+    </linearGradient>
+    <linearGradient id="facade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f5eedf"/>
+      <stop offset="100%" stop-color="#e8dfc8"/>
+    </linearGradient>
+    <linearGradient id="road2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4a4a5a"/>
+      <stop offset="100%" stop-color="#3a3a48"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Ciel bleu -->
+  <rect width="800" height="500" fill="url(#sky2)"/>
+
+  <!-- Nuages -->
+  <ellipse cx="150" cy="80" rx="90" ry="30" fill="white" opacity="0.75"/>
+  <ellipse cx="120" cy="85" rx="50" ry="25" fill="white" opacity="0.8"/>
+  <ellipse cx="195" cy="85" rx="55" ry="22" fill="white" opacity="0.8"/>
+
+  <ellipse cx="600" cy="60" rx="110" ry="28" fill="white" opacity="0.6"/>
+  <ellipse cx="565" cy="65" rx="60" ry="23" fill="white" opacity="0.7"/>
+  <ellipse cx="645" cy="65" rx="65" ry="22" fill="white" opacity="0.7"/>
+
+  <!-- Immeubles fond -->
+  <rect x="0" y="280" width="100" height="220" fill="#c8c0b0" opacity="0.5"/>
+  <rect x="680" y="260" width="120" height="240" fill="#c8c0b0" opacity="0.4"/>
+
+  <!-- Sol / trottoir -->
+  <rect x="0" y="440" width="800" height="60" fill="url(#road2)"/>
+  <rect x="0" y="438" width="800" height="6" fill="#b0aa98"/>
+  <rect x="0" y="442" width="800" height="2" fill="#5a5a6a" opacity="0.5"/>
+  <!-- Ligne blanche route -->
+  <rect x="200" y="458" width="80" height="4" fill="white" opacity="0.3"/>
+  <rect x="360" y="458" width="80" height="4" fill="white" opacity="0.3"/>
+  <rect x="520" y="458" width="80" height="4" fill="white" opacity="0.3"/>
+
+  <!-- Façade immeuble Haussmann principal -->
+  <rect x="130" y="140" width="540" height="302" fill="url(#facade)" rx="1"/>
+
+  <!-- Soubassement pierre -->
+  <rect x="130" y="390" width="540" height="52" fill="#d8d0b8"/>
+  <rect x="130" y="388" width="540" height="5" fill="#c8c0a8"/>
+
+  <!-- Ligne de corniche haute -->
+  <rect x="125" y="137" width="550" height="8" fill="#d0c8b0"/>
+  <rect x="120" y="130" width="560" height="12" fill="#c8c0a8"/>
+
+  <!-- Lignes de corniche par étage -->
+  <rect x="130" y="220" width="540" height="5" fill="#d8d0b8"/>
+  <rect x="130" y="305" width="540" height="5" fill="#d8d0b8"/>
+  <rect x="130" y="387" width="540" height="5" fill="#c8c0a8"/>
+
+  <!-- ===== FENÊTRES ===== -->
+  <!-- Lignes de fenêtres: 3 étages × 5 colonnes -->
+  <!-- Fenêtres étage 1 (y=148-215) -->
+  <!-- Colonne 1 -->
+  <rect x="155" y="148" width="70" height="68" fill="#1a3a6a" opacity="0.8" rx="1"/>
+  <rect x="157" y="150" width="32" height="64" fill="#1a3a6a" opacity="0.6"/>
+  <rect x="191" y="150" width="32" height="64" fill="#1a3a6a" opacity="0.6"/>
+  <rect x="155" y="148" width="70" height="68" stroke="#c0b898" stroke-width="2" fill="none" rx="1"/>
+  <!-- volet -->
+  <rect x="152" y="148" width="5" height="68" fill="#2c5025" rx="1"/>
+  <rect x="228" y="148" width="5" height="68" fill="#2c5025" rx="1"/>
+  <!-- reflet -->
+  <line x1="160" y1="153" x2="168" y2="161" stroke="white" stroke-width="1.5" opacity="0.3"/>
+
+  <!-- Colonne 2 -->
+  <rect x="260" y="148" width="70" height="68" fill="#1a3a6a" opacity="0.8" rx="1"/>
+  <rect x="262" y="150" width="32" height="64" fill="#1a3a6a" opacity="0.6"/>
+  <rect x="296" y="150" width="32" height="64" fill="#1a3a6a" opacity="0.6"/>
+  <rect x="260" y="148" width="70" height="68" stroke="#c0b898" stroke-width="2" fill="none" rx="1"/>
+  <rect x="257" y="148" width="5" height="68" fill="#2c5025" rx="1"/>
+  <rect x="333" y="148" width="5" height="68" fill="#2c5025" rx="1"/>
+
+  <!-- Colonne 3 centrale (grande) -->
+  <rect x="360" y="143" width="80" height="73" fill="#1a3a6a" opacity="0.8" rx="1"/>
+  <rect x="362" y="145" width="36" height="69" fill="#1a3a6a" opacity="0.6"/>
+  <rect x="402" y="145" width="36" height="69" fill="#1a3a6a" opacity="0.6"/>
+  <rect x="360" y="143" width="80" height="73" stroke="#c0b898" stroke-width="2" fill="none" rx="1"/>
+  <!-- fronton triangulaire -->
+  <polygon points="360,143 440,143 400,120" fill="#d8d0b8" stroke="#c8c0a8" stroke-width="1"/>
+
+  <!-- Colonne 4 -->
+  <rect x="470" y="148" width="70" height="68" fill="#1a3a6a" opacity="0.8" rx="1"/>
+  <rect x="472" y="150" width="32" height="64" fill="#1a3a6a" opacity="0.6"/>
+  <rect x="506" y="150" width="32" height="64" fill="#1a3a6a" opacity="0.6"/>
+  <rect x="470" y="148" width="70" height="68" stroke="#c0b898" stroke-width="2" fill="none" rx="1"/>
+  <rect x="467" y="148" width="5" height="68" fill="#2c5025" rx="1"/>
+  <rect x="543" y="148" width="5" height="68" fill="#2c5025" rx="1"/>
+
+  <!-- Colonne 5 -->
+  <rect x="575" y="148" width="70" height="68" fill="#1a3a6a" opacity="0.8" rx="1"/>
+  <rect x="577" y="150" width="32" height="64" fill="#1a3a6a" opacity="0.6"/>
+  <rect x="611" y="150" width="32" height="64" fill="#1a3a6a" opacity="0.6"/>
+  <rect x="575" y="148" width="70" height="68" stroke="#c0b898" stroke-width="2" fill="none" rx="1"/>
+  <rect x="572" y="148" width="5" height="68" fill="#2c5025" rx="1"/>
+  <rect x="648" y="148" width="5" height="68" fill="#2c5025" rx="1"/>
+
+  <!-- Fenêtres étage 2 (y=230-295) -->
+  <rect x="155" y="230" width="70" height="68" fill="#1a3a6a" opacity="0.8" rx="1"/>
+  <rect x="155" y="230" width="70" height="68" stroke="#c0b898" stroke-width="2" fill="none" rx="1"/>
+  <rect x="152" y="230" width="5" height="68" fill="#2c5025" rx="1"/>
+  <rect x="228" y="230" width="5" height="68" fill="#2c5025" rx="1"/>
+
+  <rect x="260" y="230" width="70" height="68" fill="#1a3a6a" opacity="0.8" rx="1"/>
+  <rect x="260" y="230" width="70" height="68" stroke="#c0b898" stroke-width="2" fill="none" rx="1"/>
+  <rect x="257" y="230" width="5" height="68" fill="#2c5025" rx="1"/>
+  <rect x="333" y="230" width="5" height="68" fill="#2c5025" rx="1"/>
+
+  <rect x="360" y="230" width="80" height="68" fill="#1a3a6a" opacity="0.8" rx="1"/>
+  <rect x="360" y="230" width="80" height="68" stroke="#c0b898" stroke-width="2" fill="none" rx="1"/>
+
+  <rect x="470" y="230" width="70" height="68" fill="#1a3a6a" opacity="0.8" rx="1"/>
+  <rect x="470" y="230" width="70" height="68" stroke="#c0b898" stroke-width="2" fill="none" rx="1"/>
+  <rect x="467" y="230" width="5" height="68" fill="#2c5025" rx="1"/>
+  <rect x="543" y="230" width="5" height="68" fill="#2c5025" rx="1"/>
+
+  <rect x="575" y="230" width="70" height="68" fill="#1a3a6a" opacity="0.8" rx="1"/>
+  <rect x="575" y="230" width="70" height="68" stroke="#c0b898" stroke-width="2" fill="none" rx="1"/>
+  <rect x="572" y="230" width="5" height="68" fill="#2c5025" rx="1"/>
+  <rect x="648" y="230" width="5" height="68" fill="#2c5025" rx="1"/>
+
+  <!-- Balcons étage 2 -->
+  <rect x="147" y="296" width="86" height="6" fill="#c8c0a8"/>
+  <line x1="152" y1="296" x2="152" y2="310" stroke="#b8b0a0" stroke-width="1.5"/>
+  <line x1="165" y1="296" x2="165" y2="310" stroke="#b8b0a0" stroke-width="1.5"/>
+  <line x1="178" y1="296" x2="178" y2="310" stroke="#b8b0a0" stroke-width="1.5"/>
+  <line x1="191" y1="296" x2="191" y2="310" stroke="#b8b0a0" stroke-width="1.5"/>
+  <line x1="204" y1="296" x2="204" y2="310" stroke="#b8b0a0" stroke-width="1.5"/>
+  <line x1="217" y1="296" x2="217" y2="310" stroke="#b8b0a0" stroke-width="1.5"/>
+  <line x1="230" y1="296" x2="230" y2="310" stroke="#b8b0a0" stroke-width="1.5"/>
+
+  <rect x="352" y="296" width="96" height="6" fill="#c8c0a8"/>
+  <line x1="357" y1="296" x2="357" y2="310" stroke="#b8b0a0" stroke-width="1.5"/>
+  <line x1="370" y1="296" x2="370" y2="310" stroke="#b8b0a0" stroke-width="1.5"/>
+  <line x1="383" y1="296" x2="383" y2="310" stroke="#b8b0a0" stroke-width="1.5"/>
+  <line x1="396" y1="296" x2="396" y2="310" stroke="#b8b0a0" stroke-width="1.5"/>
+  <line x1="409" y1="296" x2="409" y2="310" stroke="#b8b0a0" stroke-width="1.5"/>
+  <line x1="422" y1="296" x2="422" y2="310" stroke="#b8b0a0" stroke-width="1.5"/>
+  <line x1="435" y1="296" x2="435" y2="310" stroke="#b8b0a0" stroke-width="1.5"/>
+  <line x1="445" y1="296" x2="445" y2="310" stroke="#b8b0a0" stroke-width="1.5"/>
+
+  <!-- Fenêtres étage 3 (y=315-378) -->
+  <rect x="155" y="315" width="70" height="68" fill="#1a3a6a" opacity="0.75" rx="1"/>
+  <rect x="155" y="315" width="70" height="68" stroke="#c0b898" stroke-width="2" fill="none" rx="1"/>
+  <rect x="152" y="315" width="5" height="68" fill="#2c5025" rx="1"/>
+  <rect x="228" y="315" width="5" height="68" fill="#2c5025" rx="1"/>
+
+  <rect x="260" y="315" width="70" height="68" fill="#1a3a6a" opacity="0.75" rx="1"/>
+  <rect x="260" y="315" width="70" height="68" stroke="#c0b898" stroke-width="2" fill="none" rx="1"/>
+  <rect x="257" y="315" width="5" height="68" fill="#2c5025" rx="1"/>
+  <rect x="333" y="315" width="5" height="68" fill="#2c5025" rx="1"/>
+
+  <!-- Porte principale arrondie -->
+  <path d="M350 442 L350 360 Q400 330 450 360 L450 442Z" fill="#6a5040"/>
+  <path d="M358 442 L358 368 Q400 345 442 368 L442 442Z" fill="#7a6050" opacity="0.6"/>
+  <circle cx="395" cy="405" r="5" fill="#C9A84C" opacity="0.9"/>
+  <circle cx="406" cy="405" r="5" fill="#C9A84C" opacity="0.9"/>
+  <!-- marches -->
+  <rect x="335" y="438" width="130" height="8" fill="#d0c8b0"/>
+  <rect x="325" y="444" width="150" height="6" fill="#c8c0a0"/>
+
+  <!-- Numéro immeuble -->
+  <text x="397" y="425" font-family="serif" font-size="14" fill="#C9A84C" text-anchor="middle" opacity="0.7">14</text>
+
+  <!-- Arbres trottoir -->
+  <rect x="95" y="370" width="10" height="80" fill="#5a3d1a"/>
+  <circle cx="100" cy="345" r="35" fill="#256b20"/>
+  <circle cx="86" cy="360" r="22" fill="#1e5c1a"/>
+  <circle cx="114" cy="360" r="22" fill="#1e5c1a"/>
+
+  <rect x="695" y="370" width="10" height="80" fill="#5a3d1a"/>
+  <circle cx="700" cy="345" r="35" fill="#256b20"/>
+  <circle cx="686" cy="360" r="22" fill="#1e5c1a"/>
+  <circle cx="714" cy="360" r="22" fill="#1e5c1a"/>
+
+  <!-- Lampadaire haussmannien -->
+  <rect x="210" y="360" width="5" height="85" fill="#555"/>
+  <path d="M215 362 Q228 348 238 356" stroke="#777" stroke-width="2.5" fill="none"/>
+  <circle cx="239" cy="355" r="6" fill="#fff9c0" opacity="0.85"/>
+  <circle cx="239" cy="355" r="10" fill="#fff9c0" opacity="0.2"/>
+
+  <!-- Bande info -->
+  <rect x="0" y="462" width="800" height="38" fill="rgba(5,5,12,0.82)"/>
+  <text x="22" y="488" font-family="Georgia,serif" font-size="15" font-weight="bold" fill="#C9A84C">Appartement Haussmannien</text>
+  <text x="778" y="488" font-family="Georgia,serif" font-size="12" fill="#3DBFB8" text-anchor="end">Ymmo Immobilier</text>
+</svg>

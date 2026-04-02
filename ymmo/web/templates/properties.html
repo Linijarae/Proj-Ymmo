@@ -1,0 +1,195 @@
+{{template "header" .}}
+{{template "nav" .}}
+{{template "flash" .}}
+
+<section class="page-hero page-hero--sm">
+  <div class="container">
+    <h1 class="page-title">Nos <span class="text-gold">biens immobiliers</span></h1>
+    <p class="page-subtitle">{{with .Data}}{{.Total}}{{end}} biens disponibles</p>
+  </div>
+</section>
+
+{{with .Data}}
+<section class="section">
+  <div class="container">
+    <div class="search-layout">
+
+      <!-- SIDEBAR FILTRES -->
+      <aside class="filters-sidebar">
+        <form action="/biens" method="GET" id="filterForm">
+          <div class="filters-header">
+            <h3 class="filters-title">Filtres</h3>
+            <a href="/biens" class="filters-reset">Réinitialiser</a>
+          </div>
+
+          <!-- Recherche texte -->
+          <div class="filter-group">
+            <label class="filter-label">Recherche</label>
+            <div class="filter-input-wrap">
+              <svg class="filter-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              <input type="text" name="q" value="{{.Filter.Query}}" placeholder="Ville, quartier…" class="filter-input">
+            </div>
+          </div>
+
+          <!-- Transaction -->
+          <div class="filter-group">
+            <label class="filter-label">Transaction</label>
+            <div class="filter-buttons">
+              <label class="filter-btn {{if eq .Filter.Status "for_sale"}}active{{end}}">
+                <input type="radio" name="status" value="for_sale" {{if eq .Filter.Status "for_sale"}}checked{{end}} onchange="this.form.submit()">
+                <svg class="filter-btn-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h3a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h3a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+                Acheter
+              </label>
+              <label class="filter-btn filter-btn--teal {{if eq .Filter.Status "for_rent"}}active{{end}}">
+                <input type="radio" name="status" value="for_rent" {{if eq .Filter.Status "for_rent"}}checked{{end}} onchange="this.form.submit()">
+                <svg class="filter-btn-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clip-rule="evenodd"/></svg>
+                Louer
+              </label>
+            </div>
+          </div>
+
+          <!-- Catégorie -->
+          <div class="filter-group">
+            <label class="filter-label">Catégorie</label>
+            <div class="cat-card-group">
+              <label class="cat-card {{if eq .Filter.Type ""}}active{{end}}">
+                <input type="radio" name="type" value="" {{if eq .Filter.Type ""}}checked{{end}} onchange="this.form.submit()">
+                <span class="cat-card-icon">⊞</span>
+                <span class="cat-card-label">Tous</span>
+              </label>
+              <label class="cat-card {{if eq .Filter.Type "residential"}}active{{end}}">
+                <input type="radio" name="type" value="residential" {{if eq .Filter.Type "residential"}}checked{{end}} onchange="this.form.submit()">
+                <span class="cat-card-icon">🏠</span>
+                <span class="cat-card-label">Résidentiel</span>
+              </label>
+              <label class="cat-card cat-card--teal {{if eq .Filter.Type "commercial"}}active{{end}}">
+                <input type="radio" name="type" value="commercial" {{if eq .Filter.Type "commercial"}}checked{{end}} onchange="this.form.submit()">
+                <span class="cat-card-icon">🏢</span>
+                <span class="cat-card-label">Pro</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Type de bien -->
+          <div class="filter-group">
+            <label class="filter-label">Type de bien</label>
+            <div class="subtype-grid">
+              <label class="subtype-pill {{if eq .Filter.SubType ""}}active{{end}}">
+                <input type="radio" name="sub_type" value="" {{if eq .Filter.SubType ""}}checked{{end}} onchange="this.form.submit()">Tous
+              </label>
+              <label class="subtype-pill {{if eq .Filter.SubType "apartment"}}active{{end}}">
+                <input type="radio" name="sub_type" value="apartment" {{if eq .Filter.SubType "apartment"}}checked{{end}} onchange="this.form.submit()">🏢 Appt.
+              </label>
+              <label class="subtype-pill {{if eq .Filter.SubType "house"}}active{{end}}">
+                <input type="radio" name="sub_type" value="house" {{if eq .Filter.SubType "house"}}checked{{end}} onchange="this.form.submit()">🏠 Maison
+              </label>
+              <label class="subtype-pill {{if eq .Filter.SubType "villa"}}active{{end}}">
+                <input type="radio" name="sub_type" value="villa" {{if eq .Filter.SubType "villa"}}checked{{end}} onchange="this.form.submit()">🌴 Villa
+              </label>
+              <label class="subtype-pill {{if eq .Filter.SubType "studio"}}active{{end}}">
+                <input type="radio" name="sub_type" value="studio" {{if eq .Filter.SubType "studio"}}checked{{end}} onchange="this.form.submit()">🛋 Studio
+              </label>
+              <label class="subtype-pill {{if eq .Filter.SubType "loft"}}active{{end}}">
+                <input type="radio" name="sub_type" value="loft" {{if eq .Filter.SubType "loft"}}checked{{end}} onchange="this.form.submit()">🏗 Loft
+              </label>
+              <label class="subtype-pill {{if eq .Filter.SubType "duplex"}}active{{end}}">
+                <input type="radio" name="sub_type" value="duplex" {{if eq .Filter.SubType "duplex"}}checked{{end}} onchange="this.form.submit()">⬆ Duplex
+              </label>
+              <label class="subtype-pill subtype-pill--pro {{if eq .Filter.SubType "office"}}active{{end}}">
+                <input type="radio" name="sub_type" value="office" {{if eq .Filter.SubType "office"}}checked{{end}} onchange="this.form.submit()">💼 Bureau
+              </label>
+              <label class="subtype-pill subtype-pill--pro {{if eq .Filter.SubType "retail"}}active{{end}}">
+                <input type="radio" name="sub_type" value="retail" {{if eq .Filter.SubType "retail"}}checked{{end}} onchange="this.form.submit()">🏪 Commerce
+              </label>
+              <label class="subtype-pill subtype-pill--pro {{if eq .Filter.SubType "warehouse"}}active{{end}}">
+                <input type="radio" name="sub_type" value="warehouse" {{if eq .Filter.SubType "warehouse"}}checked{{end}} onchange="this.form.submit()">🏭 Entrepôt
+              </label>
+            </div>
+          </div>
+
+          <!-- Budget -->
+          <div class="filter-group">
+            <label class="filter-label">Budget (€)</label>
+            <div class="filter-range">
+              <input type="number" name="min_price" value="{{if gt .Filter.MinPrice 0.0}}{{toInt .Filter.MinPrice}}{{end}}" placeholder="Min" class="filter-input filter-input--sm">
+              <span class="filter-range-sep">—</span>
+              <input type="number" name="max_price" value="{{if gt .Filter.MaxPrice 0.0}}{{toInt .Filter.MaxPrice}}{{end}}" placeholder="Max" class="filter-input filter-input--sm">
+            </div>
+          </div>
+
+          <!-- Surface -->
+          <div class="filter-group">
+            <label class="filter-label">Surface (m²)</label>
+            <div class="filter-range">
+              <input type="number" name="min_surface" value="{{if gt .Filter.MinSurface 0.0}}{{toInt .Filter.MinSurface}}{{end}}" placeholder="Min" class="filter-input filter-input--sm">
+              <span class="filter-range-sep">—</span>
+              <input type="number" name="max_surface" value="{{if gt .Filter.MaxSurface 0.0}}{{toInt .Filter.MaxSurface}}{{end}}" placeholder="Max" class="filter-input filter-input--sm">
+            </div>
+          </div>
+
+          <!-- Pièces -->
+          <div class="filter-group">
+            <label class="filter-label">Pièces minimum</label>
+            <div class="filter-buttons">
+              {{range seq 5}}
+              <label class="filter-btn {{if eq $.Filter.MinRooms .}}active{{end}}">
+                <input type="radio" name="min_rooms" value="{{.}}" {{if eq $.Filter.MinRooms .}}checked{{end}} onchange="this.form.submit()"> {{.}}{{if eq . 5}}+{{end}}
+              </label>
+              {{end}}
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-gold btn-block">Appliquer</button>
+        </form>
+      </aside>
+
+      <!-- LISTE DES BIENS -->
+      <div class="properties-main">
+        {{if .Properties}}
+        <div class="results-header">
+          <span class="results-count">{{.Total}} résultat{{if gt .Total 1}}s{{end}}</span>
+          <div class="sort-by">
+            <select class="filter-select filter-select--sm" onchange="window.location=this.value">
+              <option>Trier par</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="properties-grid properties-grid--3">
+          {{range .Properties}}
+            {{template "property-card" .}}
+          {{end}}
+        </div>
+
+        <!-- Pagination -->
+        {{$curPage := .CurrentPage}}
+        {{$totPages := .TotalPages}}
+        {{if gt $totPages 1}}
+        <div class="pagination">
+          {{if gt $curPage 1}}
+          <a href="?page={{sub $curPage 1}}" class="page-btn">← Précédent</a>
+          {{end}}
+          {{range seq $totPages}}
+          <a href="?page={{.}}" class="page-btn {{if eq . $curPage}}active{{end}}">{{.}}</a>
+          {{end}}
+          {{if lt $curPage $totPages}}
+          <a href="?page={{add $curPage 1}}" class="page-btn">Suivant →</a>
+          {{end}}
+        </div>
+        {{end}}
+
+        {{else}}
+        <div class="empty-state">
+          <div class="empty-icon">🔍</div>
+          <h3>Aucun bien trouvé</h3>
+          <p>Essayez de modifier vos critères de recherche</p>
+          <a href="/biens" class="btn btn-gold">Réinitialiser les filtres</a>
+        </div>
+        {{end}}
+      </div>
+    </div>
+  </div>
+</section>
+{{end}}
+
+{{template "footer" .}}

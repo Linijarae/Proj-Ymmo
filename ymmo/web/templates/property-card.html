@@ -1,0 +1,25 @@
+{{define "property-card"}}
+<div class="property-card">
+  <a href="/biens/{{.ID}}" class="property-card-img-wrap">
+    <img src="{{.PrimaryImage}}" alt="{{.Title}}" class="property-card-img" loading="lazy" onerror="this.src='/static/img/property-placeholder.svg'">
+    <span class="property-badge {{statusClass .Status}}">{{statusLabel .Status}}</span>
+    {{if .IsFeatured}}<span class="property-badge-featured">★ Coup de cœur</span>{{end}}
+  </a>
+  <div class="property-card-body">
+    <div class="property-card-type">{{subTypeLabel .SubType}}{{if .City}} · {{.City}}{{end}}</div>
+    <h3 class="property-card-title">
+      <a href="/biens/{{.ID}}">{{truncate .Title 55}}</a>
+    </h3>
+    <div class="property-card-meta">
+      {{if gt .Surface 0.0}}<span class="meta-item"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 3h16v14H2V3zm2 2v10h12V5H4z"/></svg>{{formatSurface .Surface}}</span>{{end}}
+      {{if gt .Rooms 0}}<span class="meta-item"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2L2 7v11h16V7L10 2zm0 2.4L16 9v9H4V9l6-4.6z"/></svg>{{.Rooms}} pièces</span>{{end}}
+      {{if gt .Bedrooms 0}}<span class="meta-item">🛏 {{.Bedrooms}}</span>{{end}}
+      {{if gt .Bathrooms 0}}<span class="meta-item">🚿 {{.Bathrooms}}</span>{{end}}
+    </div>
+    <div class="property-card-footer">
+      <div class="property-price">{{formatPrice .Price}}</div>
+      {{if .Agency}}<div class="property-agency">{{.Agency.Name}}</div>{{end}}
+    </div>
+  </div>
+</div>
+{{end}}

@@ -1,0 +1,93 @@
+{{template "header" .}}
+{{template "nav" .}}
+{{template "flash" .}}
+
+<section class="auth-section">
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <a href="/">
+          <span class="logo-icon">⬡</span>
+          <span class="logo-text">Ymmo</span>
+        </a>
+      </div>
+      <h1 class="auth-title">Connexion</h1>
+      <p class="auth-subtitle">Accédez à votre espace personnel</p>
+
+      {{with .Data}}
+      {{if .Error}}
+      <div class="alert alert--error">{{.Error}}</div>
+      {{end}}
+
+      <form action="/connexion" method="POST" class="auth-form">
+        {{if .Redirect}}
+        <input type="hidden" name="redirect" value="{{.Redirect}}">
+        {{end}}
+
+        <div class="form-group">
+          <label class="form-label">Adresse email</label>
+          <input type="email" name="email" value="{{.Email}}" placeholder="votre@email.fr"
+                 class="form-control" required autofocus autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            Mot de passe
+            <span class="form-label-right"></span>
+          </label>
+          <div class="input-with-toggle">
+            <input type="password" name="password" placeholder="••••••••"
+                   class="form-control" required autocomplete="current-password" id="pwdInput">
+            <button type="button" class="input-toggle" onclick="togglePwd('pwdInput', this)" aria-label="Afficher le mot de passe">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-gold btn-block btn-lg">Se connecter</button>
+      </form>
+
+      <div class="auth-divider"><span>Nouveau sur Ymmo ?</span></div>
+      <a href="/inscription" class="btn btn-outline btn-block">Créer un compte</a>
+      {{end}}
+
+      <div class="auth-demo-info">
+        <details>
+          <summary>Comptes de démonstration</summary>
+          <div class="demo-accounts">
+            <div class="demo-account" onclick="fillDemo('admin@ymmo.fr')">
+              <span class="demo-role demo-role--admin">Admin</span>
+              <span>admin@ymmo.fr</span>
+            </div>
+            <div class="demo-account" onclick="fillDemo('directeur@ymmo.fr')">
+              <span class="demo-role demo-role--director">Directeur</span>
+              <span>directeur@ymmo.fr</span>
+            </div>
+            <div class="demo-account" onclick="fillDemo('s.leblanc@ymmo.fr')">
+              <span class="demo-role demo-role--agent">Agent</span>
+              <span>s.leblanc@ymmo.fr</span>
+            </div>
+            <div class="demo-account" onclick="fillDemo('client@example.com')">
+              <span class="demo-role demo-role--client">Client</span>
+              <span>client@example.com</span>
+            </div>
+            <p class="demo-password">Mot de passe: <strong>Password123!</strong></p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+function fillDemo(email) {
+  document.querySelector('input[name="email"]').value = email;
+  document.querySelector('input[name="password"]').value = 'Password123!';
+}
+function togglePwd(id, btn) {
+  const input = document.getElementById(id);
+  input.type = input.type === 'password' ? 'text' : 'password';
+}
+</script>
+
+{{template "footer" .}}

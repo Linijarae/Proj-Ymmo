@@ -1,0 +1,166 @@
+{{template "header" .}}
+{{template "nav" .}}
+{{template "flash" .}}
+
+<section class="page-hero page-hero--sm">
+  <div class="container">
+    <h1 class="page-title">Statistiques <span class="text-gold">Ymmo</span></h1>
+    <p class="page-subtitle">Analyses du marché immobilier sur notre réseau d'agences</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    {{with .Data}}
+
+    <!-- KPI SUMMARY -->
+    {{with .Summary}}
+    <div class="kpi-grid kpi-grid--analytics mb-xl">
+      <div class="kpi-card kpi-card--large">
+        <div class="kpi-icon kpi-icon--gold">🏠</div>
+        <div class="kpi-value">{{.TotalProperties}}</div>
+        <div class="kpi-label">Biens au catalogue</div>
+      </div>
+      <div class="kpi-card kpi-card--large">
+        <div class="kpi-icon kpi-icon--teal">🏢</div>
+        <div class="kpi-value">{{.TotalAgencies}}</div>
+        <div class="kpi-label">Agences</div>
+      </div>
+      <div class="kpi-card kpi-card--large">
+        <div class="kpi-icon kpi-icon--gold">👥</div>
+        <div class="kpi-value">{{.TotalAgents}}</div>
+        <div class="kpi-label">Agents commerciaux</div>
+      </div>
+      <div class="kpi-card kpi-card--large">
+        <div class="kpi-icon kpi-icon--teal">💰</div>
+        <div class="kpi-value">{{.TotalForSale}}</div>
+        <div class="kpi-label">À vendre</div>
+      </div>
+      <div class="kpi-card kpi-card--large">
+        <div class="kpi-icon kpi-icon--gold">🔑</div>
+        <div class="kpi-value">{{.TotalForRent}}</div>
+        <div class="kpi-label">À louer</div>
+      </div>
+      <div class="kpi-card kpi-card--large">
+        <div class="kpi-icon kpi-icon--teal">✅</div>
+        <div class="kpi-value">{{add .TotalSold .TotalRented}}</div>
+        <div class="kpi-label">Transactions réalisées</div>
+      </div>
+    </div>
+    {{end}}
+
+    <div class="analytics-grid">
+
+      <!-- CHART: Biens par ville -->
+      <div class="chart-card">
+        <h2 class="chart-title">Biens par ville</h2>
+        {{if .CityStats}}
+        <div class="bar-chart-wrap">
+          {{$maxCount := 1}}
+          {{range .CityStats}}{{if gt .Count $maxCount}}{{$maxCount = .Count}}{{end}}{{end}}
+          {{range .CityStats}}
+          <div class="bar-row">
+            <span class="bar-label">{{.City}}</span>
+            <div class="bar-track">
+              <div class="bar-fill bar-fill--gold"
+                   style="width: {{mul (div .Count $maxCount) 100}}%">
+              </div>
+            </div>
+            <span class="bar-value">{{.Count}}</span>
+          </div>
+          {{end}}
+        </div>
+        {{else}}
+        <div class="empty-state empty-state--sm"><p>Aucune donnée</p></div>
+        {{end}}
+      </div>
+
+      <!-- CHART: Prix moyen par ville -->
+      <div class="chart-card">
+        <h2 class="chart-title">Prix moyen par ville</h2>
+        {{if .CityStats}}
+        <div class="bar-chart-wrap">
+          {{$maxAvg := 1.0}}
+          {{range .CityStats}}{{if gt .AvgPrice $maxAvg}}{{$maxAvg = .AvgPrice}}{{end}}{{end}}
+          {{range .CityStats}}
+          <div class="bar-row">
+            <span class="bar-label">{{.City}}</span>
+            <div class="bar-track">
+              <div class="bar-fill bar-fill--teal"
+                   style="width: {{mul (divF .AvgPrice $maxAvg) 100}}%">
+              </div>
+            </div>
+            <span class="bar-value">{{formatPriceRaw .AvgPrice}}&thinsp;€</span>
+          </div>
+          {{end}}
+        </div>
+        {{else}}
+        <div class="empty-state empty-state--sm"><p>Aucune donnée</p></div>
+        {{end}}
+      </div>
+
+      <!-- CHART: Nouveaux biens par mois -->
+      <div class="chart-card chart-card--wide">
+        <h2 class="chart-title">Nouveaux biens ajoutés par mois</h2>
+        {{if .MonthlyStats}}
+        <div class="monthly-chart">
+          {{$maxM := 1}}
+          {{range .MonthlyStats}}{{if gt .Count $maxM}}{{$maxM = .Count}}{{end}}{{end}}
+          <div class="column-chart">
+            {{range .MonthlyStats}}
+            <div class="column-wrap">
+              <div class="column-bar-wrap">
+                <div class="column-bar"
+                     style="height: {{mul (div .Count $maxM) 100}}%"
+                     title="{{.Count}} bien(s)">
+                  <span class="column-val">{{.Count}}</span>
+                </div>
+              </div>
+              <span class="column-label">{{.Month}}</span>
+            </div>
+            {{end}}
+          </div>
+        </div>
+        {{else}}
+        <div class="empty-state empty-state--sm"><p>Aucune donnée</p></div>
+        {{end}}
+      </div>
+
+      <!-- TABLE: Top villes -->
+      <div class="chart-card">
+        <h2 class="chart-title">Tableau récapitulatif par ville</h2>
+        {{if .CityStats}}
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Ville</th>
+                <th>Nb de biens</th>
+                <th>Prix moyen</th>
+                <th>Prix min</th>
+                <th>Prix max</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{range .CityStats}}
+              <tr>
+                <td class="text-gold">{{.City}}</td>
+                <td><strong>{{.Count}}</strong></td>
+                <td>{{formatPriceRaw .AvgPrice}}&thinsp;€</td>
+                <td>{{formatPriceRaw .MinPrice}}&thinsp;€</td>
+                <td>{{formatPriceRaw .MaxPrice}}&thinsp;€</td>
+              </tr>
+              {{end}}
+            </tbody>
+          </table>
+        </div>
+        {{end}}
+      </div>
+
+    </div>{{/* end analytics-grid */}}
+
+    {{end}}{{/* end with .Data */}}
+  </div>
+</section>
+
+{{template "footer" .}}

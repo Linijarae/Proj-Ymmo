@@ -1,0 +1,262 @@
+{{template "header" .}}
+{{template "nav" .}}
+{{template "flash" .}}
+
+{{with .Data}}
+{{$isFavorite := .IsFavorite}}
+{{$similar := .Similar}}
+{{with .Property}}
+<div class="property-detail">
+
+  <!-- GALERIE IMAGES -->
+  <div class="gallery-section">
+    <div class="container">
+      <div class="gallery-grid" id="gallery">
+        {{if .Images}}
+          {{range $i, $img := .Images}}
+          <div class="gallery-item {{if eq $i 0}}gallery-item--main{{end}}" onclick="openLightbox({{$i}})">
+            <img src="{{$img.URL}}" alt="Photo {{add $i 1}}" loading="lazy" onerror="this.src='/static/img/property-placeholder.svg'">
+          </div>
+          {{end}}
+        {{else}}
+          <div class="gallery-item gallery-item--main">
+            <img src="/static/img/property-placeholder.svg" alt="{{.Title}}">
+          </div>
+        {{end}}
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENU PRINCIPAL -->
+  <div class="container">
+    <div class="property-detail-layout">
+
+      <!-- COLONNE PRINCIPALE -->
+      <div class="property-main-col">
+
+        <!-- En-tête -->
+        <div class="property-detail-header">
+          <div class="property-detail-meta">
+            <span class="property-badge-lg {{statusClass .Status}}">{{statusLabel .Status}}</span>
+            <span class="property-badge-type">{{subTypeLabel .SubType}}</span>
+            {{if .IsFeatured}}<span class="property-badge-featured">★ Coup de cœur</span>{{end}}
+          </div>
+          <div class="property-detail-actions">
+            {{if $.Claims}}
+            <button class="btn-favorite {{if $isFavorite}}active{{end}}" id="favoriteBtn"
+                    onclick="toggleFavorite({{.ID}})"
+                    title="{{if $isFavorite}}Retirer des favoris{{else}}Ajouter aux favoris{{end}}">
+                <svg viewBox="0 0 24 24" fill="{{if $isFavorite}}currentColor{{else}}none{{end}}" stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </button>
+            {{end}}
+          </div>
+        </div>
+
+        <h1 class="property-detail-title">{{.Title}}</h1>
+        <div class="property-detail-address">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          {{.Address}}{{if .Address}}, {{end}}{{.City}} {{.ZipCode}}
+        </div>
+
+        <div class="property-detail-price">
+          <span class="price-value">{{formatPrice .Price}}</span>
+          {{if gt .Surface 0.0}}<span class="price-sqm">{{divF .Price .Surface}} €/m²</span>{{end}}
+        </div>
+
+        <!-- Caractéristiques principales -->
+        <div class="property-specs-grid">
+          {{if gt .Surface 0.0}}
+          <div class="spec-item">
+            <div class="spec-icon">📐</div>
+            <div class="spec-value">{{formatSurface .Surface}}</div>
+            <div class="spec-label">Surface</div>
+          </div>
+          {{end}}
+          {{if gt .Rooms 0}}
+          <div class="spec-item">
+            <div class="spec-icon">🏠</div>
+            <div class="spec-value">{{.Rooms}}</div>
+            <div class="spec-label">Pièces</div>
+          </div>
+          {{end}}
+          {{if gt .Bedrooms 0}}
+          <div class="spec-item">
+            <div class="spec-icon">🛏</div>
+            <div class="spec-value">{{.Bedrooms}}</div>
+            <div class="spec-label">Chambres</div>
+          </div>
+          {{end}}
+          {{if gt .Bathrooms 0}}
+          <div class="spec-item">
+            <div class="spec-icon">🚿</div>
+            <div class="spec-value">{{.Bathrooms}}</div>
+            <div class="spec-label">Sdb</div>
+          </div>
+          {{end}}
+          {{if gt .Floor 0}}
+          <div class="spec-item">
+            <div class="spec-icon">🏢</div>
+            <div class="spec-value">{{.Floor}}{{if gt .TotalFloors 0}}/{{.TotalFloors}}{{end}}</div>
+            <div class="spec-label">Étage</div>
+          </div>
+          {{end}}
+        </div>
+
+        <!-- Description -->
+        {{if .Description}}
+        <div class="property-section">
+          <h2 class="property-section-title">Description</h2>
+          <div class="property-description">{{.Description}}</div>
+        </div>
+        {{end}}
+
+        <!-- Équipements -->
+        <div class="property-section">
+          <h2 class="property-section-title">Équipements & prestations</h2>
+          <div class="amenities-grid">
+            <div class="amenity-item {{if .Garage}}amenity--yes{{else}}amenity--no{{end}}">
+              <span>{{if .Garage}}✓{{else}}✗{{end}}</span> Garage
+            </div>
+            <div class="amenity-item {{if .Parking}}amenity--yes{{else}}amenity--no{{end}}">
+              <span>{{if .Parking}}✓{{else}}✗{{end}}</span> Parking
+            </div>
+            <div class="amenity-item {{if .Garden}}amenity--yes{{else}}amenity--no{{end}}">
+              <span>{{if .Garden}}✓{{else}}✗{{end}}</span> Jardin
+            </div>
+            <div class="amenity-item {{if .Pool}}amenity--yes{{else}}amenity--no{{end}}">
+              <span>{{if .Pool}}✓{{else}}✗{{end}}</span> Piscine
+            </div>
+            <div class="amenity-item {{if .Elevator}}amenity--yes{{else}}amenity--no{{end}}">
+              <span>{{if .Elevator}}✓{{else}}✗{{end}}</span> Ascenseur
+            </div>
+          </div>
+        </div>
+
+        <!-- Biens similaires -->
+        {{if $similar}}
+        <div class="property-section">
+          <h2 class="property-section-title">Biens similaires à <span class="text-gold">{{.City}}</span></h2>
+          <div class="properties-grid properties-grid--3">
+            {{range $similar}}
+              {{template "property-card" .}}
+            {{end}}
+          </div>
+        </div>
+        {{end}}
+
+      </div><!-- /main-col -->
+
+      <!-- COLONNE LATÉRALE -->
+      <div class="property-side-col">
+
+        <!-- Agence info -->
+        {{if .Agency}}
+        <div class="side-card">
+          <div class="side-card-header">
+            <div class="agency-logo">⬡</div>
+            <div>
+              <h3 class="side-agency-name">{{.Agency.Name}}</h3>
+              <p class="side-agency-city">{{.Agency.City}}</p>
+            </div>
+          </div>
+          {{if .Agency.Phone}}
+          <a href="tel:{{.Agency.Phone}}" class="btn btn-teal btn-block">
+            📞 {{.Agency.Phone}}
+          </a>
+          {{end}}
+        </div>
+        {{end}}
+
+        <!-- Agent info -->
+        {{if .Agent}}
+        <div class="side-card">
+          <div class="side-agent">
+            <div class="agent-avatar">{{initial .Agent.Email}}</div>
+            <div>
+              <h4 class="agent-name">{{.Agent.FullName}}</h4>
+              <p class="agent-role text-teal">Agent immobilier</p>
+            </div>
+          </div>
+        </div>
+        {{end}}
+
+        <!-- Formulaire de contact -->
+        <div class="side-card contact-card">
+          <h3 class="contact-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Contacter l'agent
+          </h3>
+          <form action="/contact" method="POST" class="contact-form">
+            <input type="hidden" name="property_id" value="{{.ID}}">
+            <input type="hidden" name="agent_id" value="{{.AgentID}}">
+            <div class="form-group">
+              <input type="text" name="full_name" placeholder="Votre nom complet" required class="form-control"
+                {{if $.User}}value="{{$.User.FullName}}"{{end}}>
+            </div>
+            <div class="form-group">
+              <input type="email" name="email" placeholder="Votre email" required class="form-control"
+                {{if $.User}}value="{{$.User.Email}}"{{end}}>
+            </div>
+            <div class="form-group">
+              <input type="tel" name="phone" placeholder="Votre téléphone" class="form-control"
+                {{if $.User}}value="{{$.User.Phone}}"{{end}}>
+            </div>
+            <div class="form-group">
+              <textarea name="message" placeholder="Je suis intéressé(e) par ce bien et souhaiterais organiser une visite..." required class="form-control form-textarea" rows="4">Je suis intéressé(e) par le bien "{{.Title}}" à {{.City}}. Pouvez-vous me contacter pour organiser une visite ?</textarea>
+            </div>
+            <button type="submit" class="btn btn-gold btn-block">Envoyer ma demande</button>
+            <p class="contact-notice">Votre demande sera transmise directement à l'agent responsable.</p>
+          </form>
+        </div>
+
+      </div><!-- /side-col -->
+    </div><!-- /layout -->
+  </div><!-- /container -->
+</div>
+{{end}}
+{{end}}
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">×</button>
+  <button class="lightbox-prev" onclick="event.stopPropagation();prevImage()">‹</button>
+  <button class="lightbox-next" onclick="event.stopPropagation();nextImage()">›</button>
+  <img id="lightboxImg" src="" alt="" class="lightbox-img">
+</div>
+
+<script>
+  const images = [{{with .Data}}{{with .Property}}{{range .Images}}'{{.URL}}',{{end}}{{end}}{{end}}];
+  let currentImage = 0;
+  function openLightbox(index) {
+    currentImage = index;
+    document.getElementById('lightboxImg').src = images[index];
+    document.getElementById('lightbox').classList.add('active');
+  }
+  function closeLightbox() { document.getElementById('lightbox').classList.remove('active'); }
+  function prevImage() {
+    currentImage = (currentImage - 1 + images.length) % images.length;
+    document.getElementById('lightboxImg').src = images[currentImage];
+  }
+  function nextImage() {
+    currentImage = (currentImage + 1) % images.length;
+    document.getElementById('lightboxImg').src = images[currentImage];
+  }
+  function toggleFavorite(id) {
+    fetch('/favoris/' + id, {method: 'POST'})
+      .then(r => r.text())
+      .then(status => {
+        const btn = document.getElementById('favoriteBtn');
+        if (status === 'added') {
+          btn.classList.add('active');
+          btn.querySelector('path').setAttribute('fill', 'currentColor');
+        } else {
+          btn.classList.remove('active');
+          btn.querySelector('path').setAttribute('fill', 'none');
+        }
+      });
+  }
+</script>
+
+{{template "footer" .}}

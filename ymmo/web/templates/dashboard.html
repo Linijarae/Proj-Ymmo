@@ -1,0 +1,252 @@
+{{template "header" .}}
+{{template "nav" .}}
+{{template "flash" .}}
+
+<section class="page-hero page-hero--sm">
+  <div class="container">
+    <h1 class="page-title">
+      Bonjour, <span class="text-gold">{{if .User}}{{.User.FirstName}}{{else}}Ymmo{{end}}</span>
+      <span class="role-badge">{{if .Claims}}{{roleLabel (toString .Claims.Role)}}{{end}}</span>
+    </h1>
+    <p class="page-subtitle">{{if .Claims}}{{.Claims.Email}}{{end}}</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    {{with .Data}}
+
+    <!-- ========== SUPER ADMIN ========== -->
+    {{if $.Claims}}{{if isAdmin $.Claims}}
+    <div class="dashboard-grid">
+
+      <!-- KPIs -->
+      {{with .Summary}}
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon kpi-icon--gold">🏠</div>
+          <div class="kpi-value">{{.TotalProperties}}</div>
+          <div class="kpi-label">Biens au total</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon kpi-icon--teal">🏢</div>
+          <div class="kpi-value">{{.TotalAgencies}}</div>
+          <div class="kpi-label">Agences</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon kpi-icon--gold">👥</div>
+          <div class="kpi-value">{{add .TotalAgents .TotalClients}}</div>
+          <div class="kpi-label">Utilisateurs</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon kpi-icon--teal">📨</div>
+          <div class="kpi-value">{{.TotalContacts}}</div>
+          <div class="kpi-label">Demandes reçues</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon kpi-icon--gold">💰</div>
+          <div class="kpi-value">{{.TotalForSale}}</div>
+          <div class="kpi-label">À vendre</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon kpi-icon--teal">🔑</div>
+          <div class="kpi-value">{{.TotalForRent}}</div>
+          <div class="kpi-label">À louer</div>
+        </div>
+      </div>
+      {{end}}
+
+      <!-- Actions rapides admin -->
+      <div class="dashboard-section">
+        <h2 class="dashboard-section-title">Administration</h2>
+        <div class="quick-actions">
+          <a href="/admin/utilisateurs" class="quick-action-card">
+            <div class="qa-icon">👥</div>
+            <h3>Utilisateurs</h3>
+            <p>Gérer les comptes et les rôles</p>
+          </a>
+          <a href="/admin/agences" class="quick-action-card">
+            <div class="qa-icon">🏢</div>
+            <h3>Agences</h3>
+            <p>Créer et modifier les agences</p>
+          </a>
+          <a href="/admin/contacts" class="quick-action-card">
+            <div class="qa-icon">📨</div>
+            <h3>Contacts</h3>
+            <p>Toutes les demandes clients</p>
+          </a>
+          <a href="/statistiques" class="quick-action-card">
+            <div class="qa-icon">📊</div>
+            <h3>Statistiques</h3>
+            <p>Analyses du marché</p>
+          </a>
+          <a href="/biens/nouveau" class="quick-action-card quick-action-card--gold">
+            <div class="qa-icon">+</div>
+            <h3>Nouveau bien</h3>
+            <p>Ajouter un bien immobilier</p>
+          </a>
+        </div>
+      </div>
+
+      <!-- Derniers biens -->
+      {{if .RecentProperties}}
+      <div class="dashboard-section">
+        <div class="dash-section-header">
+          <h2 class="dashboard-section-title">Derniers biens ajoutés</h2>
+          <a href="/biens" class="btn btn-sm btn-outline">Voir tous →</a>
+        </div>
+        <div class="properties-grid">
+          {{range .RecentProperties}}
+          {{template "property-card" .}}
+          {{end}}
+        </div>
+      </div>
+      {{end}}
+
+    </div>
+    {{end}}{{end}}
+
+    <!-- ========== DIRECTEUR ========== -->
+    {{if $.Claims}}{{if hasRole $.Claims "director"}}
+    <div class="dashboard-grid">
+      {{if .Agency}}
+      <div class="dashboard-section">
+        <h2 class="dashboard-section-title">Mon agence — {{.Agency.Name}}</h2>
+        <div class="agency-overview">
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-icon kpi-icon--gold">🏠</div>
+              <div class="kpi-value">{{len .Properties}}</div>
+              <div class="kpi-label">Biens actifs</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon kpi-icon--teal">👥</div>
+              <div class="kpi-value">{{len .Agents}}</div>
+              <div class="kpi-label">Agents</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {{end}}
+      {{if .Properties}}
+      <div class="dashboard-section">
+        <div class="dash-section-header">
+          <h2 class="dashboard-section-title">Biens de l'agence</h2>
+          <a href="/biens/nouveau" class="btn btn-sm btn-gold">+ Ajouter</a>
+        </div>
+        <div class="properties-grid">
+          {{range .Properties}}
+          {{template "property-card" .}}
+          {{end}}
+        </div>
+      </div>
+      {{end}}
+    </div>
+    {{end}}{{end}}
+
+    <!-- ========== AGENT ========== -->
+    {{if $.Claims}}{{if hasRole $.Claims "agent"}}
+    <div class="dashboard-grid">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon kpi-icon--gold">🏠</div>
+          <div class="kpi-value">{{len .Properties}}</div>
+          <div class="kpi-label">Mes biens</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon kpi-icon--teal">📨</div>
+          <div class="kpi-value">{{len .Contacts}}</div>
+          <div class="kpi-label">Demandes reçues</div>
+        </div>
+      </div>
+
+      <div class="dashboard-section">
+        <div class="dash-section-header">
+          <h2 class="dashboard-section-title">Mes biens</h2>
+          <a href="/biens/nouveau" class="btn btn-sm btn-gold">+ Ajouter un bien</a>
+        </div>
+        {{if .Properties}}
+        <div class="properties-grid">
+          {{range .Properties}}
+          {{template "property-card" .}}
+          {{end}}
+        </div>
+        {{else}}
+        <div class="empty-state empty-state--sm">
+          <p>Vous n'avez pas encore de biens</p>
+          <a href="/biens/nouveau" class="btn btn-gold">Ajouter un bien</a>
+        </div>
+        {{end}}
+      </div>
+
+      {{if .Contacts}}
+      <div class="dashboard-section">
+        <h2 class="dashboard-section-title">Demandes de contact</h2>
+        <div class="contacts-table">
+          {{range .Contacts}}
+          <div class="contact-row">
+            <div class="contact-row-info">
+              <strong>{{.FullName}}</strong>
+              <span class="text-muted">{{.Email}}</span>
+              {{if .Property}}<a href="/biens/{{.Property.ID}}" class="text-teal">{{.Property.Title}}</a>{{end}}
+            </div>
+            <div class="contact-row-msg">{{truncate .Message 80}}</div>
+            <div class="contact-row-meta">
+              <span class="contact-status contact-status--{{.Status}}">{{contactStatusLabel .Status}}</span>
+              <span class="text-muted">{{formatDate .CreatedAt}}</span>
+            </div>
+            <form action="/admin/contacts" method="POST" class="contact-row-actions">
+              <input type="hidden" name="contact_id" value="{{.ID}}">
+              <select name="status" class="filter-select filter-select--xs" onchange="this.form.submit()">
+                <option value="pending" {{if eq .Status "pending"}}selected{{end}}>En attente</option>
+                <option value="processed" {{if eq .Status "processed"}}selected{{end}}>Traité</option>
+                <option value="closed" {{if eq .Status "closed"}}selected{{end}}>Fermé</option>
+              </select>
+            </form>
+          </div>
+          {{end}}
+        </div>
+      </div>
+      {{end}}
+    </div>
+    {{end}}{{end}}
+
+    <!-- ========== CLIENT ========== -->
+    {{if $.Claims}}{{if hasRole $.Claims "client"}}
+    <div class="dashboard-grid">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon kpi-icon--gold">❤️</div>
+          <div class="kpi-value">{{len .Favorites}}</div>
+          <div class="kpi-label">Biens favoris</div>
+        </div>
+      </div>
+
+      <div class="dashboard-section">
+        <div class="dash-section-header">
+          <h2 class="dashboard-section-title">Mes biens favoris</h2>
+          <a href="/biens" class="btn btn-sm btn-outline">Parcourir →</a>
+        </div>
+        {{if .Favorites}}
+        <div class="properties-grid">
+          {{range .Favorites}}
+          {{template "property-card" .}}
+          {{end}}
+        </div>
+        {{else}}
+        <div class="empty-state empty-state--sm">
+          <div class="empty-icon">❤️</div>
+          <h3>Aucun favori</h3>
+          <p>Explorez nos biens et ajoutez vos coups de cœur</p>
+          <a href="/biens" class="btn btn-gold">Découvrir les biens</a>
+        </div>
+        {{end}}
+      </div>
+    </div>
+    {{end}}{{end}}
+
+    {{end}}
+  </div>
+</section>
+
+{{template "footer" .}}

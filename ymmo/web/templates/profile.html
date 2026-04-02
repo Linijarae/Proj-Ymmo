@@ -1,0 +1,136 @@
+{{template "header" .}}
+{{template "nav" .}}
+{{template "flash" .}}
+
+<section class="page-hero page-hero--sm">
+  <div class="container">
+    <h1 class="page-title">Mon <span class="text-gold">Profil</span></h1>
+    <p class="page-subtitle">Gérez vos informations personnelles</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container container--narrow">
+    {{with .Data}}
+    {{with .User}}
+
+    <div class="profile-grid">
+      <!-- Avatar & Info -->
+      <div class="profile-sidebar">
+        <div class="profile-avatar">
+          <div class="avatar-circle avatar-circle--xl">{{initial .Email}}</div>
+        </div>
+        <div class="profile-meta">
+          <h2 class="profile-name">{{.FirstName}} {{.LastName}}</h2>
+          <p class="profile-email">{{.Email}}</p>
+          {{if .Phone}}<p class="profile-phone">📞 {{.Phone}}</p>{{end}}
+          <span class="badge badge--gold">{{roleLabel (toString .Role)}}</span>
+          {{if .Agency}}<p class="profile-agency text-muted mt-sm">Agence : {{.Agency.Name}}</p>{{end}}
+        </div>
+
+        <div class="profile-stats">
+          <div class="profile-stat">
+            <span class="stat-value">{{if $.Data}}{{if $.Data.PropertyCount}}{{$.Data.PropertyCount}}{{else}}0{{end}}{{end}}</span>
+            <span class="stat-label">Biens</span>
+          </div>
+          <div class="profile-stat">
+            <span class="stat-value">{{if $.Data}}{{if $.Data.FavoriteCount}}{{$.Data.FavoriteCount}}{{else}}0{{end}}{{end}}</span>
+            <span class="stat-label">Favoris</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Forms -->
+      <div class="profile-forms">
+
+        <!-- Edit Info -->
+        <div class="card card--form">
+          <h3 class="card-title">Informations personnelles</h3>
+          <form action="/profil" method="POST">
+            <input type="hidden" name="action" value="update_info">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="first_name" class="form-label">Prénom</label>
+                <input type="text" id="first_name" name="first_name" value="{{.FirstName}}"
+                       class="form-input" required maxlength="100">
+              </div>
+              <div class="form-group">
+                <label for="last_name" class="form-label">Nom</label>
+                <input type="text" id="last_name" name="last_name" value="{{.LastName}}"
+                       class="form-input" required maxlength="100">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="phone" class="form-label">Téléphone <span class="label-optional">(optionnel)</span></label>
+              <input type="tel" id="phone" name="phone" value="{{.Phone}}"
+                     class="form-input" maxlength="20" placeholder="+33 6 00 00 00 00">
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-gold">Enregistrer</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Change Password -->
+        <div class="card card--form">
+          <h3 class="card-title">Changer le mot de passe</h3>
+          <form action="/profil" method="POST">
+            <input type="hidden" name="action" value="change_password">
+            <div class="form-group">
+              <label for="current_password" class="form-label">Mot de passe actuel</label>
+              <div class="input-icon-wrap">
+                <input type="password" id="current_password" name="current_password"
+                       class="form-input" required autocomplete="current-password">
+                <button type="button" class="input-icon-btn" onclick="togglePwd('current_password', this)">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="new_password" class="form-label">Nouveau mot de passe</label>
+              <div class="input-icon-wrap">
+                <input type="password" id="new_password" name="new_password"
+                       class="form-input" required minlength="8" autocomplete="new-password"
+                       oninput="checkStrength(this.value, 'profile-strength')">
+                <button type="button" class="input-icon-btn" onclick="togglePwd('new_password', this)">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                </button>
+              </div>
+              <div class="strength-bar" aria-hidden="true">
+                <div id="profile-strength" class="strength-fill"></div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="confirm_password" class="form-label">Confirmer le nouveau mot de passe</label>
+              <div class="input-icon-wrap">
+                <input type="password" id="confirm_password" name="confirm_password"
+                       class="form-input" required autocomplete="new-password">
+                <button type="button" class="input-icon-btn" onclick="togglePwd('confirm_password', this)">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-gold">Mettre à jour</button>
+            </div>
+          </form>
+        </div>
+
+      </div>{{/* end profile-forms */}}
+    </div>{{/* end profile-grid */}}
+
+    {{end}}{{/* end with .User */}}
+    {{end}}{{/* end with .Data */}}
+  </div>
+</section>
+
+{{template "footer" .}}

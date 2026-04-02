@@ -1,0 +1,139 @@
+{{template "header" .}}
+{{template "nav" .}}
+{{template "flash" .}}
+
+<section class="page-hero page-hero--sm">
+  <div class="container">
+    <h1 class="page-title">Gestion des <span class="text-gold">Utilisateurs</span></h1>
+    <p class="page-subtitle">{{with .Data}}{{with .Count}}{{.}} compte(s) enregistré(s){{end}}{{end}}</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    {{with .Data}}
+    <div class="admin-layout">
+
+      <!-- Create user form -->
+      <div class="admin-form-panel">
+        <div class="card card--form">
+          <h2 class="card-title">Créer un compte</h2>
+          <form action="/admin/utilisateurs" method="POST">
+            <input type="hidden" name="action" value="create">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Prénom</label>
+                <input type="text" name="first_name" class="form-input" required maxlength="100">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Nom</label>
+                <input type="text" name="last_name" class="form-input" required maxlength="100">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input type="email" name="email" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Mot de passe</label>
+              <input type="password" name="password" class="form-input" required minlength="8">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Rôle</label>
+                <select name="role" class="form-select" required>
+                  <option value="client">Client</option>
+                  <option value="agent">Agent</option>
+                  <option value="director">Directeur</option>
+                  <option value="super_admin">Super Admin</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Agence</label>
+                <select name="agency_id" class="form-select">
+                  <option value="">— Aucune —</option>
+                  {{range .Agencies}}
+                  <option value="{{.ID}}">{{.Name}}</option>
+                  {{end}}
+                </select>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-gold">Créer le compte</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Users table -->
+      <div class="admin-table-panel">
+        {{if .Users}}
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Rôle</th>
+                <th>Agence</th>
+                <th>Statut</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{range .Users}}
+              <tr class="{{if not .IsActive}}row-disabled{{end}}">
+                <td>
+                  <div class="user-cell">
+                    <div class="avatar-circle avatar-circle--sm">{{initial .Email}}</div>
+                    <span>{{.FirstName}} {{.LastName}}</span>
+                  </div>
+                </td>
+                <td class="text-muted">{{.Email}}</td>
+                <td>
+                  <form action="/admin/utilisateurs" method="POST" class="inline-form">
+                    <input type="hidden" name="action" value="set_role">
+                    <input type="hidden" name="user_id" value="{{.ID}}">
+                    <select name="role" class="filter-select filter-select--xs" onchange="this.form.submit()">
+                      <option value="client"     {{if eq (toString .Role) "client"}}selected{{end}}>Client</option>
+                      <option value="agent"      {{if eq (toString .Role) "agent"}}selected{{end}}>Agent</option>
+                      <option value="director"   {{if eq (toString .Role) "director"}}selected{{end}}>Directeur</option>
+                      <option value="super_admin"{{if eq (toString .Role) "super_admin"}}selected{{end}}>Super Admin</option>
+                    </select>
+                  </form>
+                </td>
+                <td class="text-muted text-sm">
+                  {{if .Agency}}{{.Agency.Name}}{{else}}—{{end}}
+                </td>
+                <td>
+                  {{if .IsActive}}
+                  <span class="badge badge--teal">Actif</span>
+                  {{else}}
+                  <span class="badge badge--danger">Désactivé</span>
+                  {{end}}
+                </td>
+                <td>
+                  <form action="/admin/utilisateurs" method="POST" class="inline-form">
+                    <input type="hidden" name="action" value="toggle_active">
+                    <input type="hidden" name="user_id" value="{{.ID}}">
+                    <button type="submit" class="btn btn-sm {{if .IsActive}}btn-outline{{else}}btn-teal{{end}}">
+                      {{if .IsActive}}Désactiver{{else}}Activer{{end}}
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              {{end}}
+            </tbody>
+          </table>
+        </div>
+        {{else}}
+        <div class="empty-state empty-state--sm"><p>Aucun utilisateur trouvé.</p></div>
+        {{end}}
+      </div>
+
+    </div>{{/* end admin-layout */}}
+    {{end}}
+  </div>
+</section>
+
+{{template "footer" .}}

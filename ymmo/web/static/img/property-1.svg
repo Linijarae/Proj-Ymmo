@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">
+  <defs>
+    <linearGradient id="sky1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0d1b2a"/>
+      <stop offset="55%" stop-color="#1e3a5f"/>
+      <stop offset="100%" stop-color="#c97b3a"/>
+    </linearGradient>
+    <linearGradient id="pool1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3DBFB8"/>
+      <stop offset="100%" stop-color="#1a8f8a"/>
+    </linearGradient>
+    <linearGradient id="grass1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2a6e35"/>
+      <stop offset="100%" stop-color="#1a4f25"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Ciel -->
+  <rect width="800" height="500" fill="url(#sky1)"/>
+
+  <!-- Étoiles -->
+  <circle cx="80" cy="45" r="1.5" fill="white" opacity="0.7"/>
+  <circle cx="160" cy="25" r="1" fill="white" opacity="0.5"/>
+  <circle cx="320" cy="55" r="2" fill="white" opacity="0.6"/>
+  <circle cx="480" cy="20" r="1.5" fill="white" opacity="0.7"/>
+  <circle cx="640" cy="40" r="1" fill="white" opacity="0.5"/>
+  <circle cx="740" cy="28" r="2" fill="white" opacity="0.6"/>
+  <circle cx="200" cy="70" r="1" fill="white" opacity="0.4"/>
+  <circle cx="560" cy="65" r="1.5" fill="white" opacity="0.5"/>
+
+  <!-- Lune -->
+  <circle cx="680" cy="75" r="30" fill="#f0e6c0" opacity="0.25"/>
+  <circle cx="680" cy="75" r="22" fill="#fff8e0" opacity="0.3"/>
+
+  <!-- Collines arrière-plan -->
+  <path d="M0 370 Q180 290 380 320 Q550 285 800 315 L800 500 L0 500Z" fill="#0f1e30" opacity="0.9"/>
+  <path d="M0 390 Q150 330 320 350 Q500 320 800 345 L800 500 L0 500Z" fill="#111f2e"/>
+
+  <!-- Pelouse -->
+  <rect x="0" y="430" width="800" height="70" fill="url(#grass1)"/>
+
+  <!-- Allée -->
+  <polygon points="330,500 470,500 430,430 370,430" fill="#c8b898" opacity="0.6"/>
+
+  <!-- Terrasse piscine -->
+  <rect x="500" y="408" width="230" height="28" fill="#d4c8a8" rx="2"/>
+
+  <!-- Piscine -->
+  <rect x="510" y="395" width="210" height="58" fill="url(#pool1)" rx="5"/>
+  <path d="M510 412 Q535 407 560 412 Q585 417 610 412 Q635 407 660 412 Q685 417 710 412 Q720 408 720 412" stroke="white" stroke-width="1.5" fill="none" opacity="0.35"/>
+  <path d="M510 428 Q535 423 560 428 Q585 433 610 428 Q635 423 660 428 Q685 433 720 428" stroke="white" stroke-width="1" fill="none" opacity="0.2"/>
+  <rect x="508" y="393" width="214" height="4" rx="2" fill="#5ee8e0" opacity="0.5"/>
+
+  <!-- Corps principal villa -->
+  <!-- Aile gauche -->
+  <rect x="70" y="255" width="200" height="185" fill="#f2ede2" rx="2"/>
+  <rect x="68" y="235" width="204" height="22" fill="#e8e2d4"/>
+  <rect x="68" y="232" width="204" height="6" fill="#C9A84C" opacity="0.7"/>
+
+  <!-- Corps central (surélevé) -->
+  <rect x="245" y="205" width="250" height="235" fill="#f7f2e8" rx="2"/>
+  <rect x="242" y="183" width="256" height="24" fill="#ede8dc"/>
+  <rect x="242" y="180" width="256" height="6" fill="#C9A84C" opacity="0.9"/>
+
+  <!-- Aile droite -->
+  <rect x="470" y="268" width="165" height="172" fill="#ede8de" rx="2"/>
+  <rect x="468" y="248" width="169" height="22" fill="#e5e0d4"/>
+  <rect x="468" y="245" width="169" height="6" fill="#C9A84C" opacity="0.7"/>
+
+  <!-- Fenêtres aile gauche -->
+  <rect x="90" y="278" width="70" height="80" fill="#3DBFB8" opacity="0.1" rx="1"/>
+  <rect x="92" y="280" width="66" height="76" stroke="#C9A84C" stroke-width="1.5" fill="none" rx="1" opacity="0.55"/>
+  <line x1="125" y1="280" x2="125" y2="356" stroke="#C9A84C" stroke-width="1" opacity="0.4"/>
+  <line x1="92" y1="318" x2="158" y2="318" stroke="#C9A84C" stroke-width="1" opacity="0.3"/>
+
+  <rect x="178" y="278" width="70" height="80" fill="#3DBFB8" opacity="0.1" rx="1"/>
+  <rect x="180" y="280" width="66" height="76" stroke="#C9A84C" stroke-width="1.5" fill="none" rx="1" opacity="0.55"/>
+  <line x1="213" y1="280" x2="213" y2="356" stroke="#C9A84C" stroke-width="1" opacity="0.4"/>
+
+  <!-- Fenêtres corps central (grandes) -->
+  <rect x="262" y="222" width="95" height="110" fill="#3DBFB8" opacity="0.1" rx="1"/>
+  <rect x="264" y="224" width="91" height="106" stroke="#C9A84C" stroke-width="2" fill="none" rx="1" opacity="0.65"/>
+  <line x1="310" y1="224" x2="310" y2="330" stroke="#C9A84C" stroke-width="1.5" opacity="0.5"/>
+  <line x1="264" y1="276" x2="355" y2="276" stroke="#C9A84C" stroke-width="1.5" opacity="0.4"/>
+  <line x1="266" y1="227" x2="275" y2="236" stroke="white" stroke-width="1.5" opacity="0.3"/>
+
+  <rect x="376" y="222" width="95" height="110" fill="#3DBFB8" opacity="0.1" rx="1"/>
+  <rect x="378" y="224" width="91" height="106" stroke="#C9A84C" stroke-width="2" fill="none" rx="1" opacity="0.65"/>
+  <line x1="424" y1="224" x2="424" y2="330" stroke="#C9A84C" stroke-width="1.5" opacity="0.5"/>
+  <line x1="378" y1="276" x2="469" y2="276" stroke="#C9A84C" stroke-width="1.5" opacity="0.4"/>
+
+  <!-- Porte principale -->
+  <rect x="308" y="338" width="124" height="102" fill="#7a6050" rx="2"/>
+  <rect x="316" y="348" width="44" height="80" fill="#C9A84C" opacity="0.12"/>
+  <rect x="380" y="348" width="44" height="80" fill="#C9A84C" opacity="0.12"/>
+  <rect x="318" y="350" width="40" height="76" stroke="#C9A84C" stroke-width="1" fill="none" opacity="0.5"/>
+  <rect x="382" y="350" width="40" height="76" stroke="#C9A84C" stroke-width="1" fill="none" opacity="0.5"/>
+  <circle cx="370" cy="400" r="5" fill="#C9A84C" opacity="0.9"/>
+  <circle cx="372" cy="400" r="5" fill="#C9A84C" opacity="0.9"/>
+
+  <!-- Colonnes -->
+  <rect x="311" y="195" width="11" height="140" fill="#ddd8cc"/>
+  <rect x="417" y="195" width="11" height="140" fill="#ddd8cc"/>
+
+  <!-- Fenêtres aile droite -->
+  <rect x="487" y="285" width="62" height="72" fill="#3DBFB8" opacity="0.1" rx="1"/>
+  <rect x="489" y="287" width="58" height="68" stroke="#C9A84C" stroke-width="1.5" fill="none" rx="1" opacity="0.5"/>
+  <line x1="518" y1="287" x2="518" y2="355" stroke="#C9A84C" stroke-width="1" opacity="0.4"/>
+
+  <rect x="562" y="285" width="58" height="72" fill="#3DBFB8" opacity="0.1" rx="1"/>
+  <rect x="564" y="287" width="54" height="68" stroke="#C9A84C" stroke-width="1.5" fill="none" rx="1" opacity="0.5"/>
+
+  <!-- Marches -->
+  <rect x="270" y="438" width="200" height="7" fill="#d0c8b0"/>
+  <rect x="260" y="443" width="220" height="7" fill="#c4bc9e"/>
+
+  <!-- Arbres gauche -->
+  <rect x="22" y="333" width="13" height="107" fill="#5a3d1a"/>
+  <circle cx="29" cy="295" r="52" fill="#1a5820"/>
+  <circle cx="13" cy="318" r="33" fill="#165018"/>
+  <circle cx="45" cy="318" r="33" fill="#165018"/>
+
+  <!-- Palmier piscine -->
+  <rect x="495" y="358" width="8" height="58" fill="#7a5a30"/>
+  <path d="M499 358 C476 325 448 316 456 306" stroke="#2d6e18" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path d="M499 358 C520 320 548 316 544 306" stroke="#2d6e18" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path d="M499 358 C487 328 490 305 483 298" stroke="#2d6e18" stroke-width="8" fill="none" stroke-linecap="round"/>
+
+  <!-- Arbre droite -->
+  <rect x="756" y="355" width="11" height="75" fill="#5a3d1a"/>
+  <circle cx="762" cy="328" r="38" fill="#1a5820"/>
+
+  <!-- Lampadaire -->
+  <rect x="218" y="375" width="5" height="65" fill="#666"/>
+  <path d="M223 375 Q235 365 245 372" stroke="#888" stroke-width="2" fill="none"/>
+  <circle cx="246" cy="371" r="5" fill="#fff8a0" opacity="0.9" filter="url(#glow)"/>
+  <circle cx="246" cy="371" r="8" fill="#fff8a0" opacity="0.25"/>
+
+  <!-- Bande info -->
+  <rect x="0" y="462" width="800" height="38" fill="rgba(5,5,12,0.82)"/>
+  <text x="22" y="488" font-family="Georgia,serif" font-size="15" font-weight="bold" fill="#C9A84C">Villa Contemporaine avec Piscine</text>
+  <text x="778" y="488" font-family="Georgia,serif" font-size="12" fill="#3DBFB8" text-anchor="end">Ymmo Immobilier</text>
+</svg>

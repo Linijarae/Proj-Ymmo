@@ -1,0 +1,252 @@
+{{template "header" .}}
+{{template "nav" .}}
+{{template "flash" .}}
+
+{{with .Data}}
+{{$isEdit := .IsEdit}}
+{{$property := .Property}}
+{{$agencies := .Agencies}}
+
+<section class="page-hero page-hero--sm">
+  <div class="container">
+    <h1 class="page-title">
+      {{if $isEdit}}Modifier le bien<span class="text-gold"> #{{$property.ID}}</span>
+      {{else}}Ajouter un <span class="text-gold">nouveau bien</span>{{end}}
+    </h1>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container container--narrow">
+    <div class="card card--form card--lg">
+
+      <form action="{{if $isEdit}}/biens/{{$property.ID}}/modifier{{else}}/biens/nouveau{{end}}" method="POST">
+
+        <!-- INFORMATIONS GÉNÉRALES -->
+        <fieldset class="form-fieldset">
+          <legend class="form-legend">Informations générales</legend>
+
+          <div class="form-group">
+            <label for="title" class="form-label">Titre de l'annonce <span class="required">*</span></label>
+            <input type="text" id="title" name="title" class="form-input"
+                   value="{{if $isEdit}}{{$property.Title}}{{end}}"
+                   required maxlength="255" placeholder="Ex : Appartement lumineux T3 centre-ville">
+          </div>
+
+          <div class="form-group">
+            <label for="description" class="form-label">Description <span class="required">*</span></label>
+            <textarea id="description" name="description" class="form-textarea" rows="5"
+                      required maxlength="5000"
+                      placeholder="Décrivez le bien en détail...">{{if $isEdit}}{{$property.Description}}{{end}}</textarea>
+          </div>
+
+          <div class="form-row form-row--3">
+            <div class="form-group">
+              <label for="type" class="form-label">Type <span class="required">*</span></label>
+              <select id="type" name="type" class="form-select" required>
+                <option value="">Choisir…</option>
+                <option value="residential" {{if $isEdit}}{{if eq (toString $property.Type) "residential"}}selected{{end}}{{end}}>Résidentiel</option>
+                <option value="commercial" {{if $isEdit}}{{if eq (toString $property.Type) "commercial"}}selected{{end}}{{end}}>Commercial</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="sub_type" class="form-label">Sous-type <span class="required">*</span></label>
+              <select id="sub_type" name="sub_type" class="form-select" required>
+                <option value="">Choisir…</option>
+                <optgroup label="Résidentiel">
+                  <option value="apartment"  {{if $isEdit}}{{if eq (toString $property.SubType) "apartment"}}selected{{end}}{{end}}>Appartement</option>
+                  <option value="house"      {{if $isEdit}}{{if eq (toString $property.SubType) "house"}}selected{{end}}{{end}}>Maison</option>
+                  <option value="villa"      {{if $isEdit}}{{if eq (toString $property.SubType) "villa"}}selected{{end}}{{end}}>Villa</option>
+                  <option value="studio"     {{if $isEdit}}{{if eq (toString $property.SubType) "studio"}}selected{{end}}{{end}}>Studio</option>
+                  <option value="loft"       {{if $isEdit}}{{if eq (toString $property.SubType) "loft"}}selected{{end}}{{end}}>Loft</option>
+                  <option value="duplex"     {{if $isEdit}}{{if eq (toString $property.SubType) "duplex"}}selected{{end}}{{end}}>Duplex</option>
+                  <option value="terraced"   {{if $isEdit}}{{if eq (toString $property.SubType) "terraced"}}selected{{end}}{{end}}>Maison de ville</option>
+                </optgroup>
+                <optgroup label="Commercial">
+                  <option value="office"     {{if $isEdit}}{{if eq (toString $property.SubType) "office"}}selected{{end}}{{end}}>Bureau</option>
+                  <option value="retail"     {{if $isEdit}}{{if eq (toString $property.SubType) "retail"}}selected{{end}}{{end}}>Commerce</option>
+                  <option value="warehouse"  {{if $isEdit}}{{if eq (toString $property.SubType) "warehouse"}}selected{{end}}{{end}}>Entrepôt</option>
+                  <option value="building"   {{if $isEdit}}{{if eq (toString $property.SubType) "building"}}selected{{end}}{{end}}>Immeuble</option>
+                  <option value="land"       {{if $isEdit}}{{if eq (toString $property.SubType) "land"}}selected{{end}}{{end}}>Terrain</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="status" class="form-label">Statut <span class="required">*</span></label>
+              <select id="status" name="status" class="form-select" required>
+                <option value="for_sale"  {{if $isEdit}}{{if eq (toString $property.Status) "for_sale"}}selected{{end}}{{end}}>À vendre</option>
+                <option value="for_rent"  {{if $isEdit}}{{if eq (toString $property.Status) "for_rent"}}selected{{end}}{{end}}>À louer</option>
+                <option value="sold"      {{if $isEdit}}{{if eq (toString $property.Status) "sold"}}selected{{end}}{{end}}>Vendu</option>
+                <option value="rented"    {{if $isEdit}}{{if eq (toString $property.Status) "rented"}}selected{{end}}{{end}}>Loué</option>
+              </select>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- PRIX & SURFACE -->
+        <fieldset class="form-fieldset">
+          <legend class="form-legend">Prix &amp; superficie</legend>
+          <div class="form-row form-row--3">
+            <div class="form-group">
+              <label for="price" class="form-label">Prix (€) <span class="required">*</span></label>
+              <input type="number" id="price" name="price" class="form-input"
+                     value="{{if $isEdit}}{{$property.Price}}{{end}}"
+                     required min="0" step="1" placeholder="250000">
+            </div>
+            <div class="form-group">
+              <label for="surface" class="form-label">Surface (m²) <span class="required">*</span></label>
+              <input type="number" id="surface" name="surface" class="form-input"
+                     value="{{if $isEdit}}{{$property.Surface}}{{end}}"
+                     required min="1" step="0.01" placeholder="65">
+            </div>
+            <div class="form-group">
+              <label for="floor" class="form-label">Étage</label>
+              <input type="number" id="floor" name="floor" class="form-input"
+                     value="{{if $isEdit}}{{$property.Floor}}{{end}}"
+                     min="0" max="99" placeholder="0">
+            </div>
+          </div>
+          <div class="form-row form-row--3">
+            <div class="form-group">
+              <label for="rooms" class="form-label">Pièces</label>
+              <input type="number" id="rooms" name="rooms" class="form-input"
+                     value="{{if $isEdit}}{{$property.Rooms}}{{end}}"
+                     min="0" max="99" placeholder="3">
+            </div>
+            <div class="form-group">
+              <label for="bedrooms" class="form-label">Chambres</label>
+              <input type="number" id="bedrooms" name="bedrooms" class="form-input"
+                     value="{{if $isEdit}}{{$property.Bedrooms}}{{end}}"
+                     min="0" max="99" placeholder="2">
+            </div>
+            <div class="form-group">
+              <label for="bathrooms" class="form-label">Salles de bain</label>
+              <input type="number" id="bathrooms" name="bathrooms" class="form-input"
+                     value="{{if $isEdit}}{{$property.Bathrooms}}{{end}}"
+                     min="0" max="99" placeholder="1">
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- LOCALISATION -->
+        <fieldset class="form-fieldset">
+          <legend class="form-legend">Localisation</legend>
+          <div class="form-group">
+            <label for="address" class="form-label">Adresse</label>
+            <input type="text" id="address" name="address" class="form-input"
+                   value="{{if $isEdit}}{{$property.Address}}{{end}}"
+                   maxlength="255" placeholder="12 rue des Lilas">
+          </div>
+          <div class="form-row form-row--3">
+            <div class="form-group">
+              <label for="city" class="form-label">Ville <span class="required">*</span></label>
+              <input type="text" id="city" name="city" class="form-input"
+                     value="{{if $isEdit}}{{$property.City}}{{end}}"
+                     required maxlength="100">
+            </div>
+            <div class="form-group">
+              <label for="zip_code" class="form-label">Code postal <span class="required">*</span></label>
+              <input type="text" id="zip_code" name="zip_code" class="form-input"
+                     value="{{if $isEdit}}{{$property.ZipCode}}{{end}}"
+                     required maxlength="10" pattern="[0-9]{5}">
+            </div>
+            <div class="form-group">
+              <label for="department" class="form-label">Département</label>
+              <input type="text" id="department" name="department" class="form-input"
+                     value="{{if $isEdit}}{{$property.Department}}{{end}}"
+                     maxlength="100" placeholder="Bouches-du-Rhône">
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- ÉQUIPEMENTS -->
+        <fieldset class="form-fieldset">
+          <legend class="form-legend">Équipements &amp; options</legend>
+          <div class="checkbox-grid">
+            <label class="checkbox-label">
+              <input type="checkbox" name="garage" value="1"
+                     {{if $isEdit}}{{if $property.Garage}}checked{{end}}{{end}}>
+              <span class="checkbox-custom"></span>
+              <span>Garage</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="parking" value="1"
+                     {{if $isEdit}}{{if $property.Parking}}checked{{end}}{{end}}>
+              <span class="checkbox-custom"></span>
+              <span>Parking</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="garden" value="1"
+                     {{if $isEdit}}{{if $property.Garden}}checked{{end}}{{end}}>
+              <span class="checkbox-custom"></span>
+              <span>Jardin</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="pool" value="1"
+                     {{if $isEdit}}{{if $property.Pool}}checked{{end}}{{end}}>
+              <span class="checkbox-custom"></span>
+              <span>Piscine</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="elevator" value="1"
+                     {{if $isEdit}}{{if $property.Elevator}}checked{{end}}{{end}}>
+              <span class="checkbox-custom"></span>
+              <span>Ascenseur</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="is_featured" value="1"
+                     {{if $isEdit}}{{if $property.IsFeatured}}checked{{end}}{{end}}>
+              <span class="checkbox-custom checkbox-custom--gold"></span>
+              <span class="text-gold">Bien mis en avant</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <!-- IMAGE URL (simple URL input) -->
+        <fieldset class="form-fieldset">
+          <legend class="form-legend">Photo principale</legend>
+          <div class="form-group">
+            <label for="image_url" class="form-label">URL de l'image <span class="label-optional">(optionnel)</span></label>
+            <input type="url" id="image_url" name="image_url" class="form-input"
+                   value="{{if $isEdit}}{{if $property.Images}}{{index $property.Images 0}}{{end}}{{end}}"
+                   placeholder="https://…">
+            <p class="form-hint">Collez l'URL d'une image hébergée en ligne</p>
+          </div>
+        </fieldset>
+
+        <!-- AGENCE (admin only) -->
+        {{if $.Claims}}{{if isAdmin $.Claims}}
+        {{if $agencies}}
+        <fieldset class="form-fieldset">
+          <legend class="form-legend">Agence</legend>
+          <div class="form-group">
+            <label for="agency_id" class="form-label">Rattacher à l'agence</label>
+            <select id="agency_id" name="agency_id" class="form-select">
+              <option value="">— Aucune —</option>
+              {{range $agencies}}
+              <option value="{{.ID}}"
+                {{if $isEdit}}{{if $property.Agency}}{{if eq $property.Agency.ID .ID}}selected{{end}}{{end}}{{end}}>
+                {{.Name}} — {{.City}}
+              </option>
+              {{end}}
+            </select>
+          </div>
+        </fieldset>
+        {{end}}
+        {{end}}{{end}}
+
+        <!-- ACTIONS -->
+        <div class="form-actions form-actions--spaced">
+          <a href="/biens{{if $isEdit}}/{{$property.ID}}{{end}}" class="btn btn-outline">Annuler</a>
+          <button type="submit" class="btn btn-gold btn-lg">
+            {{if $isEdit}}Enregistrer les modifications{{else}}Publier le bien{{end}}
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</section>
+{{end}}{{/* end with .Data */}}
+
+{{template "footer" .}}
